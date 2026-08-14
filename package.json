@@ -1,0 +1,45 @@
+{
+  "name": "agent-ready",
+  "version": "0.1.0",
+  "description": "Is your repository ready for coding agents? A deterministic readiness audit CLI.",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "coding-agent",
+    "agents",
+    "codex",
+    "claude-code",
+    "cursor",
+    "developer-tools",
+    "repository",
+    "static-analysis",
+    "cli",
+    "devex"
+  ],
+  "bin": {
+    "agent-ready": "dist/cli/index.js"
+  },
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "pretest": "npm run build",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "vitest": "^4.1.10"
+  }
+}
