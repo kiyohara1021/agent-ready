@@ -65,20 +65,46 @@ Do not grant full points to an empty or boilerplate-only file.
 
 Repository explains how a developer or agent can prepare the project.
 
-Signals may include:
+Suggested scoring:
 
-- installation command
-- runtime requirement
-- dependency setup
-- local environment setup
+```text
+documented install/dependency command         +3
+documented runtime/toolchain requirement      +1
+documented local run/dev command              +1
+
+setup implied but undocumented                 1   (instead of the above)
+```
 
 #### `instructions.tests` — 5
 
 A developer can determine how to run the relevant tests.
 
+Suggested scoring:
+
+```text
+documented test command                       +3
+dedicated testing section                     +1
+guidance on when/how to run the tests         +1
+
+tests exist but are undocumented               1   (instead of the above)
+```
+
 #### `instructions.quality` — 5
 
 Lint, format, type-check, static-analysis, or equivalent validation guidance is documented.
+
+Suggested scoring:
+
+```text
+documented quality command                    +3
+backed by configured tooling or a script      +1
+explained under a quality/validation section  +1
+
+tooling exists but is undocumented             1   (instead of the above)
+```
+
+This check is not applicable to a repository with no source files and no project
+metadata, and is then excluded from the denominator.
 
 #### `instructions.architecture` — 5
 
@@ -90,6 +116,15 @@ Examples:
 - architecture section in README
 - ADR index
 - concise module ownership explanation
+
+Suggested scoring:
+
+```text
+substantial architecture document or section  +3
+architecture heading with little behind it    +1   (instead of the above)
+directory/module map                          +1
+ADR index or multiple design documents        +1
+```
 
 ### Automation — 25 points
 

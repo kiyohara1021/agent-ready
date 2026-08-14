@@ -1,0 +1,8 @@
+{
+  "name": "stub-instructions",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node --test",
+    "lint": "eslint ."
+  }
+}

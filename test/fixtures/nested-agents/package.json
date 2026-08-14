@@ -1,0 +1,5 @@
+{
+  "name": "nested-agents",
+  "private": true,
+  "workspaces": ["packages/*"]
+}

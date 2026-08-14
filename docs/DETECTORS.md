@@ -29,6 +29,35 @@ Every detector must document:
 - false-positive considerations
 - tests
 
+## What counts as "documented"
+
+Several detectors distinguish a command that documentation tells a reader to
+run from words that merely appear in prose.
+
+A command is documented when it appears in a fenced code block or an inline code
+span in one of the discovered documents:
+
+```text
+AGENTS.md (root and nested)
+README / CONTRIBUTING / DEVELOPMENT / INSTALL / SETUP
+docs/, doc/, .github/ documentation files
+```
+
+"Install the dependencies with npm install" is prose and is not a documented
+command. A `npm install` code block is.
+
+Nested `AGENTS.md` files are evidence that scoped instructions exist, which is
+what `instructions.agents-md` scores them for. They are not repository-wide
+guidance, so `instructions.setup`, `instructions.tests`,
+`instructions.quality`, and `instructions.architecture` ignore them. Otherwise a
+vendored, example, or fixture project inside the repository could answer
+questions about the repository itself.
+
+Command recognition is ecosystem-neutral and matches normalized command
+segments, so `uv run pytest`, `./vendor/bin/phpstan analyse`, and
+`npm ci && npm test` all resolve correctly, while `color: black;` in a CSS
+example does not resolve to the Black formatter.
+
 ## General rules
 
 Detectors must:
@@ -97,6 +126,14 @@ Do not assume length equals quality.
 
 Keyword detection should be conservative.
 
+A file that names no concrete command and holds less than roughly 200 characters
+of non-whitespace content is treated as a stub: it earns existence credit only.
+A short file that does name real commands is concise, not boilerplate, and is
+scored normally.
+
+A file passes only when it exists and carries at least two kinds of real
+guidance.
+
 ---
 
 ## `instructions.setup`
@@ -130,9 +167,18 @@ cargo build
 flutter pub get
 ```
 
+### Partial scoring signals
+
+- documented install/dependency command
+- documented runtime/toolchain requirement, including pinned version files such
+  as `.nvmrc`, `.tool-versions`, or `.python-version`
+- documented command to run the project locally
+
 ### Warning
 
 Setup is implied but not clearly documented.
+
+A dependency manifest or a `setup`/`bootstrap` script is enough to imply setup.
 
 ### Fail
 
@@ -150,6 +196,13 @@ Agents should validate changes before proposing them.
 
 Documentation referencing tests or known test commands.
 
+### Partial scoring signals
+
+- documented test command
+- dedicated testing section in the document that documents the command
+- guidance on when or how to run the tests, such as running them before
+  submitting a change, coverage, or filtering to a single test
+
 ### Pass
 
 A clear test command is documented.
@@ -158,9 +211,12 @@ A clear test command is documented.
 
 Tests exist but usage is unclear.
 
+A test suite in the repository or a discovered test script is enough to show
+tests exist.
+
 ### Fail
 
-No test guidance.
+No test guidance and no test suite.
 
 ---
 
@@ -172,7 +228,13 @@ Linting, formatting, type checking, and static analysis catch changes that tests
 
 ### Evidence
 
-Documentation plus discovered scripts.
+Documentation plus discovered scripts and tool configuration.
+
+### Partial scoring signals
+
+- documented lint/format/type-check command
+- a matching script or tool configuration in the repository
+- a dedicated quality/validation section around the command
 
 ### Pass
 
@@ -185,6 +247,18 @@ Command exists but is undocumented.
 ### Fail
 
 No quality validation can be found where one is expected.
+
+### Not applicable
+
+The repository contains no source files and no project manifest. A
+documentation-only repository is not expected to document lint or type-check
+validation, so the check is excluded from the score rather than failed.
+
+### False-positive considerations
+
+Commands that cover both linting and type analysis in their ecosystem — such as
+`dart analyze` or `go vet` — count for both. Ecosystems without a separate
+type-check step must not be penalized for lacking one.
 
 ---
 
@@ -202,6 +276,13 @@ A coding agent benefits from knowing module boundaries and system responsibiliti
 - ADR index
 - AGENTS.md architecture/module guidance
 
+### Partial scoring signals
+
+- a substantial architecture/design document, or an architecture section with
+  real content behind the heading
+- a directory/module map, drawn as a tree or introduced by a structure heading
+- an ADR index, or more than one design document
+
 ### Pass
 
 A concise high-level map exists.
@@ -210,9 +291,18 @@ A concise high-level map exists.
 
 Architecture is partially documented.
 
+A heading with nothing behind it, or a stub document, is a warning rather than a
+pass.
+
 ### Fail
 
 No high-level guidance.
+
+### Note on overlap
+
+`context.architecture` measures the same documentation as repository context
+rather than as agent guidance. The two detectors read the same files; keep their
+scoring rationale distinct rather than double-counting the same conclusion.
 
 ---
 

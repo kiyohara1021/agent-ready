@@ -33,9 +33,15 @@ describe("analyzeRepository", () => {
   it("runs the default pipeline against a fixture repository", async () => {
     const result = await analyzeRepository(SAMPLE_REPO);
 
-    expect(result.findings.map((finding) => finding.id)).toStrictEqual(["bootstrap.stub"]);
-    expect(result.categories).toStrictEqual([{ id: "context", score: 1, maxScore: 1 }]);
-    expect(result.score).toBe(100);
+    expect(result.findings.map((finding) => finding.id)).toStrictEqual([
+      "instructions.agents-md",
+      "instructions.setup",
+      "instructions.tests",
+      "instructions.quality",
+      "instructions.architecture",
+    ]);
+    expect(result.categories).toStrictEqual([{ id: "instructions", score: 17, maxScore: 30 }]);
+    expect(result.score).toBe(57);
   });
 
   it("orders findings by category then registration, not completion order", async () => {
@@ -54,18 +60,23 @@ describe("analyzeRepository", () => {
     ]);
   });
 
-  it("collects recommendations from findings", async () => {
+  it("collects recommendations from findings, highest priority first", async () => {
     const { root, cleanup } = await createTempRepo();
     try {
       const result = await analyzeRepository(root);
 
       expect(result.score).toBe(0);
-      expect(result.recommendations).toStrictEqual([
-        {
-          findingId: "bootstrap.stub",
-          priority: "high",
-          message: "Add repository content that a coding agent can read.",
-        },
+      expect(result.recommendations.map((entry) => entry.findingId)).toStrictEqual([
+        "instructions.agents-md",
+        "instructions.setup",
+        "instructions.tests",
+        "instructions.architecture",
+      ]);
+      expect(result.recommendations.map((entry) => entry.priority)).toStrictEqual([
+        "high",
+        "high",
+        "high",
+        "medium",
       ]);
     } finally {
       await cleanup();

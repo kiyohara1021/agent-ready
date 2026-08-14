@@ -18,5 +18,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true
   },
-  "include": ["src", "test", "vitest.config.ts"]
+  // Fixtures are repository data read by tests, not project sources.
+  "include": ["src", "test", "vitest.config.ts"],
+  "exclude": ["test/fixtures"]
 }

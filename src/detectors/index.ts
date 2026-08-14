@@ -1,5 +1,9 @@
 import type { Detector } from "../core/types.js";
-import { bootstrapPipelineDetector } from "./bootstrap/pipeline.js";
+import { agentsMdDetector } from "./instructions/agents-md.js";
+import { architectureInstructionsDetector } from "./instructions/architecture.js";
+import { qualityInstructionsDetector } from "./instructions/quality.js";
+import { setupInstructionsDetector } from "./instructions/setup.js";
+import { testInstructionsDetector } from "./instructions/tests.js";
 
 /**
  * Detector registry.
@@ -8,6 +12,18 @@ import { bootstrapPipelineDetector } from "./bootstrap/pipeline.js";
  * new detectors rather than reordering existing ones. Adding a detector should
  * not require touching unrelated core logic.
  */
-export const defaultDetectors: readonly Detector[] = [bootstrapPipelineDetector];
+export const defaultDetectors: readonly Detector[] = [
+  agentsMdDetector,
+  setupInstructionsDetector,
+  testInstructionsDetector,
+  qualityInstructionsDetector,
+  architectureInstructionsDetector,
+];
 
-export { bootstrapPipelineDetector };
+export {
+  agentsMdDetector,
+  setupInstructionsDetector,
+  testInstructionsDetector,
+  qualityInstructionsDetector,
+  architectureInstructionsDetector,
+};
