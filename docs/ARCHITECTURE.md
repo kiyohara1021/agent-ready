@@ -44,8 +44,13 @@ src/
 │
 ├── discovery/
 │   ├── filesystem.ts
+│   ├── markdown.ts
+│   ├── documentation.ts
+│   ├── commands.ts
 │   ├── ecosystems.ts
 │   ├── scripts.ts
+│   ├── tooling.ts
+│   ├── cache.ts
 │   └── ignores.ts
 │
 ├── detectors/
@@ -53,6 +58,7 @@ src/
 │   │   ├── agents-md.ts
 │   │   ├── setup.ts
 │   │   ├── tests.ts
+│   │   ├── quality.ts
 │   │   └── architecture.ts
 │   ├── automation/
 │   │   ├── tests.ts
@@ -172,6 +178,11 @@ export interface RepositoryContext {
 Discovery should do the expensive/common filesystem work once where possible.
 
 This prevents each detector from independently rescanning the repository.
+
+Derived discovery — documentation, scripts, ecosystems, tooling — is memoized
+per `RepositoryContext` (`discovery/cache.ts`), so several detectors asking the
+same question do the work once. The cache lives exactly as long as the analysis
+and is never shared between repositories.
 
 ## File indexing
 

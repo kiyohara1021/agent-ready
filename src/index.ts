@@ -4,7 +4,14 @@ export { collectRecommendations } from "./core/recommendations.js";
 export { scoreFindings } from "./core/score.js";
 export { SCHEMA_VERSION, TOOL_VERSION } from "./core/version.js";
 export * from "./core/errors.js";
-export { defaultDetectors } from "./detectors/index.js";
+export {
+  defaultDetectors,
+  agentsMdDetector,
+  setupInstructionsDetector,
+  testInstructionsDetector,
+  qualityInstructionsDetector,
+  architectureInstructionsDetector,
+} from "./detectors/index.js";
 export { renderJsonReport } from "./reporters/json.js";
 export { renderTextReport } from "./reporters/text.js";
 export { scanRepository } from "./discovery/filesystem.js";

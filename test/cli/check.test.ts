@@ -3,7 +3,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { describe, expect, it } from "vitest";
 
-import { createTempRepo, SAMPLE_REPO } from "../helpers/temp-repo.js";
+import { createTempRepo, fixture, SAMPLE_REPO } from "../helpers/temp-repo.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -36,7 +36,8 @@ describe("agent-ready CLI", () => {
 
     expect(result.code).toBe(0);
     expect(result.stdout).toContain("Agent Readiness:");
-    expect(result.stdout).toContain("Repository Context");
+    expect(result.stdout).toContain("Instructions");
+    expect(result.stdout).toContain("instructions.agents-md");
     expect(result.stderr).toBe("");
   });
 
@@ -60,13 +61,13 @@ describe("agent-ready CLI", () => {
     expect(report.schemaVersion).toBe(1);
     expect(report.toolVersion).toMatch(/^\d+\.\d+\.\d+$/);
     expect(typeof report.score).toBe("number");
-    expect(report.findings.map((finding) => finding.id)).toContain("bootstrap.stub");
+    expect(report.findings.map((finding) => finding.id)).toContain("instructions.agents-md");
   });
 
   it("exits 2 when the score is below --min-score", async () => {
     const { root, cleanup } = await createTempRepo();
     try {
-      // An empty repository scores 0 with the bootstrap detector.
+      // An empty repository satisfies no instruction detector.
       const result = await runCli(["check", root, "--min-score", "50"]);
 
       expect(result.code).toBe(2);
@@ -77,8 +78,10 @@ describe("agent-ready CLI", () => {
   });
 
   it("exits 0 when the score meets --min-score", async () => {
-    const result = await runCli(["check", SAMPLE_REPO, "--min-score", "100"]);
+    const result = await runCli(["check", fixture("node-healthy"), "--min-score", "90"]);
+
     expect(result.code).toBe(0);
+    expect(result.stdout).toContain("Agent Readiness: 100 / 100");
   });
 
   it("exits 1 for a missing path and keeps the message on stderr", async () => {

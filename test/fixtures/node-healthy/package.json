@@ -1,0 +1,15 @@
+{
+  "name": "node-healthy",
+  "version": "1.0.0",
+  "description": "Fixture repository modelling a well-prepared Node.js project.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "test": "node --test",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  }
+}

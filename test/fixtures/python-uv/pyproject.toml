@@ -1,0 +1,11 @@
+[project]
+name = "python-uv"
+version = "0.1.0"
+description = "Fixture repository modelling a well-prepared Python project."
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+
+[tool.mypy]
+strict = true
