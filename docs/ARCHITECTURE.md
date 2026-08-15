@@ -375,6 +375,20 @@ Responsibilities:
 - aggregate category score
 - calculate overall score
 - preserve finding order deterministically
+- reject findings that exceed the documented category budget
+- derive and order recommendations
+
+`core/score.ts` holds the category weights from `docs/SCORING.md` and rejects
+findings whose declared points exceed them. The guard catches detector drift
+rather than repository problems, so it raises `AnalysisError`.
+
+`core/recommendations.ts` derives the recommendation list from applicable
+findings that left points unearned, ordered by priority, then recoverable
+points, then category and finding id. The comparator is a total order, so
+neither list depends on detector completion order.
+
+Scoring is also free of ambient inputs: no clock, no randomness, no environment
+lookups. The same findings always produce the same score.
 
 ## Reporter layer
 

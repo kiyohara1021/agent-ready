@@ -1,7 +1,7 @@
 export { analyzeContext, analyzeRepository } from "./core/analyze.js";
 export { buildRepositoryContext } from "./core/repository-context.js";
 export { collectRecommendations } from "./core/recommendations.js";
-export { scoreFindings } from "./core/score.js";
+export { CATEGORY_WEIGHTS, TOTAL_WEIGHT, scoreFindings } from "./core/score.js";
 export { SCHEMA_VERSION, TOOL_VERSION } from "./core/version.js";
 export * from "./core/errors.js";
 export {
@@ -33,6 +33,7 @@ export type {
   RecommendationEntry,
   RecommendationPriority,
 } from "./core/types.js";
+export type { ScoreSummary } from "./core/score.js";
 export type {
   RepositoryContext,
   RepositoryFileIndex,
