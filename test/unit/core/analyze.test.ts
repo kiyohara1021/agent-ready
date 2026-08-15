@@ -44,13 +44,25 @@ describe("analyzeRepository", () => {
       "automation.typecheck",
       "automation.ci",
       "automation.dependencies",
+      "context.readme",
+      "context.architecture",
+      "context.metadata",
+      "context.ignore",
+      "context.generated",
+      "safety.gitignore",
+      "safety.secrets",
+      "safety.security-policy",
+      "safety.lockfile",
     ]);
     expect(result.categories).toStrictEqual([
       { id: "instructions", score: 17, maxScore: 30 },
       // automation.typecheck does not apply to a plain JavaScript project.
       { id: "automation", score: 11, maxScore: 20 },
+      { id: "context", score: 13, maxScore: 25 },
+      // safety.lockfile does not apply: the manifest declares no dependencies.
+      { id: "safety", score: 6, maxScore: 15 },
     ]);
-    expect(result.score).toBe(56);
+    expect(result.score).toBe(52);
   });
 
   it("orders findings by category then registration, not completion order", async () => {
@@ -74,19 +86,28 @@ describe("analyzeRepository", () => {
     try {
       const result = await analyzeRepository(root);
 
-      expect(result.score).toBe(0);
+      // Nothing is documented, but nothing generated pollutes the tree either.
+      expect(result.score).toBe(9);
       expect(result.recommendations.map((entry) => entry.findingId)).toStrictEqual([
         "instructions.agents-md",
         "instructions.setup",
         "instructions.tests",
+        "context.readme",
         "instructions.architecture",
+        "context.architecture",
+        "context.ignore",
+        "context.metadata",
+        "safety.secrets",
+        "safety.security-policy",
+        "safety.gitignore",
       ]);
-      expect(result.recommendations.map((entry) => entry.priority)).toStrictEqual([
+      expect(result.recommendations.slice(0, 4).map((entry) => entry.priority)).toStrictEqual([
         "high",
         "high",
         "high",
-        "medium",
+        "high",
       ]);
+      expect(result.recommendations.at(-1)?.priority).toBe("low");
     } finally {
       await cleanup();
     }

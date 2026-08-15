@@ -17,10 +17,11 @@ import { fixture } from "../helpers/temp-repo.js";
  * no CI, a stub `AGENTS.md`, a non-Node ecosystem, and a repository with almost
  * nothing to go on.
  *
- * Note that only the Instructions and Automation detectors exist so far, so
- * these totals are out of 55 applicable points rather than 100. Adding the
- * Repository Context and Safety detectors will move every number here; that is
- * expected, and updating this table is part of that change.
+ * Every category now has detectors, so a fixture in which every check applies
+ * is scored out of the full 100 points. Where a fixture's applicable maxima add
+ * up to less than 100 — a Go repository with no conventional type-check step, a
+ * project with no dependencies to lock — the non-applicable checks have left
+ * both the numerator and the denominator, as docs/SCORING.md describes.
  */
 
 interface Expectation {
@@ -39,124 +40,189 @@ const EXPECTATIONS: Readonly<Record<string, Expectation>> = {
     categories: [
       { id: "instructions", score: 30, maxScore: 30 },
       { id: "automation", score: 25, maxScore: 25 },
+      { id: "context", score: 25, maxScore: 25 },
+      { id: "safety", score: 20, maxScore: 20 },
     ],
     recommendations: [],
   },
   "python-uv": {
     describes: "a healthy Python package with minor instruction gaps",
-    score: 95,
+    score: 87,
     categories: [
       { id: "instructions", score: 27, maxScore: 30 },
       { id: "automation", score: 25, maxScore: 25 },
+      { id: "context", score: 21, maxScore: 25 },
+      { id: "safety", score: 14, maxScore: 20 },
     ],
-    recommendations: ["instructions.setup"],
+    recommendations: [
+      "safety.security-policy",
+      "context.metadata",
+      "instructions.setup",
+      "context.architecture",
+      "context.readme",
+      "safety.secrets",
+    ],
   },
   "php-composer": {
-    describes: "strong automation undercut by missing agent instructions",
-    score: 49,
+    describes: "strong automation undercut by missing instructions and safety",
+    score: 37,
     categories: [
       { id: "instructions", score: 3, maxScore: 30 },
       { id: "automation", score: 24, maxScore: 25 },
+      { id: "context", score: 10, maxScore: 25 },
+      { id: "safety", score: 0, maxScore: 20 },
     ],
     recommendations: [
       "instructions.agents-md",
+      "safety.gitignore",
       "instructions.setup",
       "instructions.tests",
       "instructions.architecture",
+      "context.architecture",
+      "context.ignore",
+      "safety.lockfile",
+      "safety.secrets",
       "instructions.quality",
+      "context.readme",
+      "safety.security-policy",
       "automation.dependencies",
+      "context.generated",
+      "context.metadata",
     ],
   },
   "sample-repo": {
     describes: "a plain JavaScript project, so the type-check does not apply",
-    score: 56,
+    score: 52,
     categories: [
       { id: "instructions", score: 17, maxScore: 30 },
-      // automation.typecheck is not conventional for plain JavaScript.
       { id: "automation", score: 11, maxScore: 20 },
+      { id: "context", score: 13, maxScore: 25 },
+      { id: "safety", score: 6, maxScore: 15 },
     ],
     recommendations: [
       "instructions.architecture",
+      "context.architecture",
       "instructions.quality",
+      "context.readme",
+      "safety.secrets",
       "automation.dependencies",
+      "safety.security-policy",
       "instructions.setup",
       "automation.lint",
+      "context.metadata",
       "instructions.tests",
       "automation.ci",
       "automation.tests",
+      "context.ignore",
+      "safety.gitignore",
     ],
   },
   "stub-instructions": {
     describes: "a boilerplate AGENTS.md that must not earn full instruction points",
-    score: 30,
+    score: 28,
     categories: [
       { id: "instructions", score: 7, maxScore: 30 },
       { id: "automation", score: 8, maxScore: 20 },
+      { id: "context", score: 10, maxScore: 25 },
+      { id: "safety", score: 0, maxScore: 15 },
     ],
     recommendations: [
+      "safety.gitignore",
       "instructions.setup",
       "instructions.tests",
       "instructions.agents-md",
       "automation.ci",
+      "context.architecture",
+      "context.ignore",
+      "safety.secrets",
       "instructions.architecture",
       "instructions.quality",
       "automation.dependencies",
+      "safety.security-policy",
+      "context.metadata",
       "automation.lint",
       "automation.tests",
+      "context.generated",
+      "context.readme",
     ],
   },
   "nested-agents": {
     describes: "scoped AGENTS.md files with no repository-level instructions",
-    score: 6,
+    score: 10,
     categories: [
       { id: "instructions", score: 2, maxScore: 30 },
       { id: "automation", score: 1, maxScore: 20 },
+      { id: "context", score: 6, maxScore: 25 },
+      { id: "safety", score: 0, maxScore: 15 },
     ],
     recommendations: [
       "instructions.agents-md",
       "instructions.tests",
+      "safety.gitignore",
       "instructions.setup",
       "automation.tests",
       "instructions.architecture",
       "instructions.quality",
       "automation.ci",
       "automation.lint",
+      "context.architecture",
+      "context.ignore",
+      "safety.secrets",
+      "context.metadata",
+      "context.readme",
       "automation.dependencies",
+      "safety.security-policy",
+      "context.generated",
     ],
   },
   "minimal-repo": {
     describes: "a bare Go repository with almost no operational guidance",
-    score: 6,
+    score: 13,
     categories: [
       { id: "instructions", score: 1, maxScore: 30 },
-      // Go has no conventional separate type-check step.
       { id: "automation", score: 2, maxScore: 20 },
+      { id: "context", score: 9, maxScore: 25 },
+      { id: "safety", score: 0, maxScore: 15 },
     ],
     recommendations: [
       "instructions.agents-md",
       "instructions.tests",
+      "safety.gitignore",
       "instructions.setup",
       "automation.tests",
       "instructions.architecture",
       "instructions.quality",
       "automation.ci",
+      "context.architecture",
+      "context.ignore",
+      "safety.secrets",
       "automation.lint",
+      "context.readme",
+      "context.metadata",
       "automation.dependencies",
+      "safety.security-policy",
     ],
   },
   "docs-only": {
     describes: "documentation with no code, so nothing is automatable",
-    score: 0,
+    score: 14,
     categories: [
-      // Every automation check is inapplicable, so the category is omitted
-      // rather than reported as a zero.
       { id: "instructions", score: 0, maxScore: 25 },
+      { id: "context", score: 8, maxScore: 25 },
+      { id: "safety", score: 1, maxScore: 15 },
     ],
     recommendations: [
       "instructions.agents-md",
       "instructions.setup",
       "instructions.tests",
       "instructions.architecture",
+      "context.architecture",
+      "context.ignore",
+      "safety.secrets",
+      "context.readme",
+      "safety.security-policy",
+      "safety.gitignore",
+      "context.metadata",
     ],
   },
 };

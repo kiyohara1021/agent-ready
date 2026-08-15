@@ -9,10 +9,11 @@ Analysis is local, read-only, and requires no LLM API, account, or telemetry.
 
 ## Status
 
-Early development. The Instructions and Automation detectors described in
-[docs/DETECTORS.md](docs/DETECTORS.md) are implemented; the Repository Context
-and Safety detectors are not, so a score reflects only part of the model in
-[docs/SCORING.md](docs/SCORING.md).
+Early development. All four detector categories described in
+[docs/DETECTORS.md](docs/DETECTORS.md) — Instructions, Automation, Repository
+Context, and Safety — are implemented, so a score reflects the whole model in
+[docs/SCORING.md](docs/SCORING.md). Checks that do not apply to a repository
+leave both the numerator and the denominator rather than reducing the score.
 
 ## Usage
 

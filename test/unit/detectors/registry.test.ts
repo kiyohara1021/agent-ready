@@ -17,6 +17,15 @@ describe("detector registry", () => {
       "automation.typecheck",
       "automation.ci",
       "automation.dependencies",
+      "context.readme",
+      "context.architecture",
+      "context.metadata",
+      "context.ignore",
+      "context.generated",
+      "safety.gitignore",
+      "safety.secrets",
+      "safety.security-policy",
+      "safety.lockfile",
     ]);
   });
 
@@ -38,6 +47,8 @@ describe("detector registry", () => {
     expect(result.categories).toStrictEqual([
       { id: "instructions", score: 30, maxScore: 30 },
       { id: "automation", score: 25, maxScore: 25 },
+      { id: "context", score: 25, maxScore: 25 },
+      { id: "safety", score: 20, maxScore: 20 },
     ]);
     expect(result.score).toBe(100);
   });
@@ -45,9 +56,22 @@ describe("detector registry", () => {
   it("keeps non-applicable checks out of the denominator", async () => {
     const result = await analyzeRepository(fixture("docs-only"));
 
-    // A documentation-only repository has nothing to lint, test, or automate.
-    expect(result.categories).toStrictEqual([{ id: "instructions", score: 0, maxScore: 25 }]);
-    expect(result.score).toBe(0);
+    // A documentation-only repository has nothing to lint, test, automate, or
+    // lock, so those checks leave the denominator rather than scoring zero.
+    expect(result.categories).toStrictEqual([
+      { id: "instructions", score: 0, maxScore: 25 },
+      { id: "context", score: 8, maxScore: 25 },
+      { id: "safety", score: 1, maxScore: 15 },
+    ]);
+    expect(result.findings.filter((finding) => !finding.applicable).map((finding) => finding.id)).toStrictEqual([
+      "instructions.quality",
+      "automation.tests",
+      "automation.lint",
+      "automation.typecheck",
+      "automation.ci",
+      "automation.dependencies",
+      "safety.lockfile",
+    ]);
   });
 
   // Fixture scores are locked in test/regression/fixture-scores.test.ts, which

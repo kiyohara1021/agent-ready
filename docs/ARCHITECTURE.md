@@ -53,8 +53,13 @@ src/
 │   ├── entry-points.ts
 │   ├── workflows.ts
 │   ├── dependency-automation.ts
-│   ├── cache.ts
-│   └── ignores.ts
+│   ├── architecture.ts
+│   ├── ignores.ts
+│   ├── generated.ts
+│   ├── project-metadata.ts
+│   ├── lockfiles.ts
+│   ├── secret-paths.ts
+│   └── cache.ts
 │
 ├── detectors/
 │   ├── instructions/
@@ -71,6 +76,7 @@ src/
 │   │   └── dependencies.ts
 │   ├── context/
 │   │   ├── readme.ts
+│   │   ├── architecture.ts
 │   │   ├── metadata.ts
 │   │   ├── ignore.ts
 │   │   └── generated.ts
@@ -178,6 +184,13 @@ export interface RepositoryContext {
 }
 ```
 
+As implemented, the context holds the file index, the repository metadata, the
+directories indexing skipped, and a bounded reader; everything derived from them
+is memoized discovery rather than an eager field. Skipped directories are part of
+the context because they cannot be recovered from the index: `node_modules` is
+present in the working tree and absent from `files`, and `context.generated`
+needs to know the difference.
+
 Discovery should do the expensive/common filesystem work once where possible.
 
 This prevents each detector from independently rescanning the repository.
@@ -219,6 +232,33 @@ DerivedData
 ```
 
 Exact behavior should respect ecosystem conventions and ignore files.
+
+## Ignore rules
+
+`discovery/ignores.ts` parses `.gitignore` — root and nested — alongside
+agent-specific files (`.agentignore`, `.cursorignore`, `.aiderignore`, …) and
+tool ignore files, and answers one question for the detectors that need it:
+would these rules exclude this path?
+
+Patterns are compiled to regular expressions supporting comments, negation,
+anchoring, directory-only rules, `*`, `?`, and `**`. Character classes are
+matched literally and git's "an excluded parent cannot be re-included" rule is
+not implemented; over-claiming there would produce confident wrong findings.
+Pattern length and count are capped, because the patterns come from an untrusted
+repository.
+
+Git exclusion is deliberately separate from the rest: only `.gitignore` decides
+what is committed, so the safety detectors ask `excludes`, while `context.ignore`
+asks `excludedByAny`.
+
+## Secret-bearing paths
+
+`discovery/secret-paths.ts` recognizes environment files, private keys, and
+credential files **by filename only**. It never opens a candidate file, so no
+secret value can reach a finding, a report, or a log — there is nothing to leak
+because nothing is read. Templates (`.env.example` and siblings) and test-fixture
+locations are marked so that detectors can tell documentation and test material
+from exposure. Entropy scanning is out of scope for v0.1.
 
 ## Ecosystem detection
 

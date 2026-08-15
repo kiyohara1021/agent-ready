@@ -1,7 +1,13 @@
 import {
+  ARCHITECTURE_HEADING,
+  DECISION_HEADING,
+  describesStructure,
+  findDecisionRecords,
+  isArchitectureDocument,
+} from "../../discovery/architecture.js";
+import {
   collectDocumentation,
   repositoryDocumentation,
-  type DocumentationFile,
 } from "../../discovery/documentation.js";
 import { contentLength, findSections, hasHeading } from "../../discovery/markdown.js";
 import type { RepositoryContext } from "../../core/repository-context.js";
@@ -36,34 +42,6 @@ const MAX_SCORE = 5;
 const MIN_DOCUMENT_CONTENT = 300;
 /** A section inside a larger document is expected to be shorter. */
 const MIN_SECTION_CONTENT = 200;
-/** Lines needed before a code block counts as a directory map. */
-const MIN_TREE_LINES = 3;
-
-const ARCHITECTURE_DOCUMENT =
-  /(^|\/)(architecture|design|system-design|system_design|code-map|codemap|module-map|overview)\.(md|mdx|rst)$/;
-/** Anchored at the repository root so a vendored project's ADRs do not count. */
-const DECISION_DIRECTORY = /^(docs?\/)?(adr|adrs|decisions|rfcs)\//;
-
-const ARCHITECTURE_HEADING =
-  /\b(architecture|system design|high-?level design|design overview|how it works|components?|modules?|data flow|layers?|code ?map)\b/;
-const STRUCTURE_HEADING =
-  /\b((project|repository|directory|folder|code|codebase|package) (structure|layout|map|overview)|structure|layout)\b/;
-const DECISION_HEADING = /\b(architecture decision record|adrs?|decision records?|rfcs?)\b/;
-
-const TREE_CHARACTER = /[├└│]/;
-const DIRECTORY_LINE = /^[\w.@-]+\/$/;
-
-function isArchitectureDocument(doc: DocumentationFile): boolean {
-  return ARCHITECTURE_DOCUMENT.test(doc.path.toLowerCase());
-}
-
-/** A code block that draws a directory tree, in either common style. */
-function hasDirectoryMap(doc: DocumentationFile): boolean {
-  const treeLines = doc.signals.code.filter(
-    (line) => TREE_CHARACTER.test(line) || DIRECTORY_LINE.test(line),
-  );
-  return treeLines.length >= MIN_TREE_LINES;
-}
 
 function finding(overrides: Omit<Finding, "id" | "category" | "maxScore">): Finding {
   return { id: ID, category: "instructions", maxScore: MAX_SCORE, ...overrides };
@@ -89,11 +67,9 @@ export const architectureInstructionsDetector: Detector = {
 
     const thinHeading = docs.some((doc) => hasHeading(doc.signals, ARCHITECTURE_HEADING));
 
-    const structureDoc = docs.find(
-      (doc) => hasDirectoryMap(doc) || hasHeading(doc.signals, STRUCTURE_HEADING),
-    );
+    const structureDoc = docs.find((doc) => describesStructure(doc));
 
-    const decisionFile = context.files.all.find((file) => DECISION_DIRECTORY.test(file.path.toLowerCase()));
+    const decisionFile = findDecisionRecords(context);
     const decisionHeading = docs.some((doc) => hasHeading(doc.signals, DECISION_HEADING));
     const hasDecisionRecords =
       decisionFile !== undefined || decisionHeading || architectureDocs.length >= 2;
@@ -130,7 +106,7 @@ export const architectureInstructionsDetector: Detector = {
     if (hasDecisionRecords) {
       score += 1;
       if (decisionFile !== undefined) {
-        evidence.push({ kind: "file", path: decisionFile.path, label: "Architecture decision records" });
+        evidence.push({ kind: "file", path: decisionFile, label: "Architecture decision records" });
       }
     }
 

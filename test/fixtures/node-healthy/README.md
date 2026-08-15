@@ -12,7 +12,9 @@ A fixture repository that models a well-prepared Node.js project.
 npm ci
 ```
 
-## Running locally
+## Usage
+
+Copy `.env.example` to `.env`, then run the service locally:
 
 ```bash
 npm run dev

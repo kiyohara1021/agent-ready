@@ -34,6 +34,43 @@ describe("scanRepository", () => {
     }
   });
 
+  it("reports the skipped directories so detectors can see they exist", async () => {
+    const { root, cleanup } = await createTempRepo();
+    try {
+      await writeFile(path.join(root, "README.md"), "# temp");
+      for (const directory of ["node_modules", "dist", "packages/api/node_modules"]) {
+        await mkdir(path.join(root, directory), { recursive: true });
+        await writeFile(path.join(root, directory, "file.txt"), "generated");
+      }
+
+      const { files, skippedDirectories } = await scanRepository(root);
+
+      // Present in the working tree, absent from the index.
+      expect(skippedDirectories).toStrictEqual([
+        "dist",
+        "node_modules",
+        "packages/api/node_modules",
+      ]);
+      expect(files.map((file) => file.path)).toStrictEqual(["README.md"]);
+    } finally {
+      await cleanup();
+    }
+  });
+
+  it("bounds the reported skipped directories", async () => {
+    const { root, cleanup } = await createTempRepo();
+    try {
+      for (const directory of ["node_modules", "dist", "coverage"]) {
+        await mkdir(path.join(root, directory), { recursive: true });
+      }
+
+      const { skippedDirectories } = await scanRepository(root, { maxSkippedDirectories: 2 });
+      expect(skippedDirectories).toHaveLength(2);
+    } finally {
+      await cleanup();
+    }
+  });
+
   it("returns files sorted by path regardless of traversal order", async () => {
     const { files } = await scanRepository(SAMPLE_REPO);
     const paths = files.map((file) => file.path);

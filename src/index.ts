@@ -16,6 +16,15 @@ export {
   typecheckAutomationDetector,
   ciAutomationDetector,
   dependencyAutomationDetector,
+  readmeContextDetector,
+  architectureContextDetector,
+  metadataContextDetector,
+  ignoreContextDetector,
+  generatedContextDetector,
+  gitignoreSafetyDetector,
+  secretsSafetyDetector,
+  securityPolicyDetector,
+  lockfileSafetyDetector,
 } from "./detectors/index.js";
 export { renderJsonReport } from "./reporters/json.js";
 export { renderTextReport } from "./reporters/text.js";
