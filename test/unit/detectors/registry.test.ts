@@ -50,22 +50,8 @@ describe("detector registry", () => {
     expect(result.score).toBe(0);
   });
 
-  it("scores fixtures deterministically", async () => {
-    const names = [
-      "node-healthy",
-      "python-uv",
-      "php-composer",
-      "sample-repo",
-      "stub-instructions",
-      "minimal-repo",
-      "docs-only",
-    ];
-    const scores = await Promise.all(
-      names.map(async (name) => (await analyzeRepository(fixture(name))).score),
-    );
-
-    expect(scores).toStrictEqual([100, 95, 49, 56, 30, 6, 0]);
-  });
+  // Fixture scores are locked in test/regression/fixture-scores.test.ts, which
+  // owns the score model rather than the registry.
 
   it("produces the same result on repeated analysis of the same repository", async () => {
     const [first, second] = await Promise.all([

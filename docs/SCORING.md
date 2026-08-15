@@ -360,6 +360,29 @@ Low:
 
 Priority should consider context and not merely point weight.
 
+### Derivation
+
+A finding produces a recommendation only when acting on it could improve the report:
+
+- the detector attached a recommendation
+- the check applies to this repository
+- the check left points unearned
+
+A non-applicable check never produces advice, for the same reason it never reduces the score: it was not asked. A check already at full marks has nothing left to recommend.
+
+### Ordering
+
+Recommendation order is a total order, so it depends only on the set of findings and never on the order detectors happened to finish in:
+
+```text
+1. priority
+2. points recoverable, larger first
+3. category order
+4. finding id
+```
+
+Priority leads because a detector sets it from context. Recoverable points break ties within a priority so the larger win is offered first.
+
 ## Avoiding score gaming
 
 The scorer should not blindly reward filenames.
@@ -409,6 +432,29 @@ A detector may be:
 A not-applicable check should not unfairly reduce the score.
 
 If category maximums need normalization because of non-applicable checks, normalization must be deterministic and documented.
+
+### Chosen behavior
+
+v0.1 does not renormalize.
+
+A non-applicable check is removed from both the numerator and the denominator. Nothing is redistributed to the remaining checks, and a category is not scaled back up to its documented maximum.
+
+Consequences:
+
+- an applicable check keeps the absolute point value documented above, whatever else applies
+- a category with non-applicable checks reports a smaller maximum, and therefore carries proportionally less weight for that repository
+- a category with no applicable checks is omitted from the breakdown rather than reported as zero
+- a repository with no applicable checks at all scores `0`
+
+Example: a Go repository has no conventional separate type-check step, so `automation.typecheck` is not applicable. Automation reports a maximum of 20 rather than 25, and the overall denominator is 95 rather than 100.
+
+Renormalizing back to a fixed category share would be a second scoring model. Do not add one without changing this document first.
+
+### Budget enforcement
+
+The sum of `maxScore` across a category's detectors — applicable or not — must equal the documented category total.
+
+Scoring rejects findings that exceed it. A detector claiming points the model does not allocate is a defect in the tool, not a property of the analyzed repository, and must not silently produce a wrong score.
 
 ## Score calculation
 
