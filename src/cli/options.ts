@@ -11,6 +11,7 @@ export interface CheckOptions {
   /** Exit with code 2 when the score is below this value. */
   minScore?: number;
   help: boolean;
+  version: boolean;
 }
 
 const FORMATS: readonly string[] = ["text", "json"];
@@ -36,6 +37,7 @@ export function parseCheckOptions(argv: readonly string[]): CheckOptions {
         format: { type: "string" },
         "min-score": { type: "string" },
         help: { type: "boolean", default: false },
+        version: { type: "boolean", default: false },
       },
       allowPositionals: true,
       strict: true,
@@ -69,5 +71,6 @@ export function parseCheckOptions(argv: readonly string[]): CheckOptions {
       ? {}
       : { minScore: parseMinScore(values["min-score"]) }),
     help: values.help,
+    version: values.version,
   };
 }

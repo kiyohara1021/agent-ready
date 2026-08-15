@@ -1,6 +1,7 @@
 import path from "node:path";
 
 import { analyzeRepository } from "../core/analyze.js";
+import { TOOL_VERSION } from "../core/version.js";
 import { renderJsonReport } from "../reporters/json.js";
 import { renderTextReport } from "../reporters/text.js";
 import { parseCheckOptions } from "./options.js";
@@ -20,6 +21,11 @@ export async function runCheck(argv: readonly string[], io: CliIo): Promise<numb
     return EXIT_CODES.success;
   }
 
+  if (options.version) {
+    io.stdout.write(`${TOOL_VERSION}\n`);
+    return EXIT_CODES.success;
+  }
+
   const target = path.resolve(io.cwd, options.path);
   const result = await analyzeRepository(target);
 
@@ -30,6 +36,11 @@ export async function runCheck(argv: readonly string[], io: CliIo): Promise<numb
   }
 
   if (options.minScore !== undefined && result.score < options.minScore) {
+    // The report is the deliverable and stays on stdout; this line explains the
+    // non-zero exit to whoever reads a CI log, so it belongs on stderr.
+    io.stderr.write(
+      `Agent readiness ${String(result.score)} is below the required minimum of ${String(options.minScore)}.\n`,
+    );
     return EXIT_CODES.thresholdNotMet;
   }
 

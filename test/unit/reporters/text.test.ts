@@ -76,6 +76,103 @@ describe("renderTextReport", () => {
     expect(output.endsWith("\n\n")).toBe(false);
   });
 
+  it("closes with the overall score so it survives a long CI log", () => {
+    const output = renderTextReport(result);
+    expect(output.trimEnd().endsWith("Score: 78/100")).toBe(true);
+  });
+
+  it("renders the four categories in documented order", () => {
+    const categories: AnalysisResult = {
+      ...result,
+      categories: [
+        { id: "instructions", score: 1, maxScore: 1 },
+        { id: "automation", score: 1, maxScore: 1 },
+        { id: "context", score: 1, maxScore: 1 },
+        { id: "safety", score: 1, maxScore: 1 },
+      ],
+      findings: (["instructions", "automation", "context", "safety"] as const).map(
+        (category) => ({
+          id: `${category}.example`,
+          category,
+          status: "pass" as const,
+          title: "Example",
+          message: "",
+          score: 1,
+          maxScore: 1,
+          applicable: true,
+        }),
+      ),
+    };
+    const output = renderTextReport(categories);
+
+    const headings = ["Instructions", "Automation", "Repository Context", "Safety"];
+    const positions = headings.map((heading) => output.indexOf(heading));
+    expect(positions).not.toContain(-1);
+    expect([...positions].sort((a, b) => a - b)).toStrictEqual(positions);
+  });
+
+  it("marks a non-applicable finding as n/a instead of a zero score", () => {
+    const output = renderTextReport({
+      ...result,
+      findings: [
+        {
+          id: "automation.typecheck",
+          category: "automation",
+          status: "info",
+          title: "A separate type-check step is not conventional here",
+          message: "",
+          score: 0,
+          maxScore: 5,
+          applicable: false,
+        },
+      ],
+    });
+
+    expect(output).toContain("• A separate type-check step is not conventional here");
+    expect(output).toContain("automation.typecheck n/a");
+    expect(output).not.toContain("automation.typecheck 0/5");
+  });
+
+  it("keeps score contributions aligned when a title is long", () => {
+    const output = renderTextReport({
+      ...result,
+      findings: [
+        {
+          id: "instructions.agents-md",
+          category: "instructions",
+          status: "pass",
+          title: "A very long finding title that runs well past the default column",
+          message: "",
+          score: 6,
+          maxScore: 10,
+          applicable: true,
+        },
+        {
+          id: "safety.security-policy",
+          category: "safety",
+          status: "warning",
+          title: "Short",
+          message: "",
+          score: 2,
+          maxScore: 5,
+          applicable: true,
+        },
+      ],
+    });
+
+    const columns = output
+      .split("\n")
+      .filter((line) => / (instructions|safety)\./.test(line))
+      .map((line) => line.search(/\S+\.\S+ \S+$/));
+
+    expect(columns).toHaveLength(2);
+    expect(new Set(columns).size).toBe(1);
+    // Every label keeps at least one space before its contribution.
+    for (const line of output.split("\n")) {
+      expect(line).not.toMatch(/\S(instructions|safety)\./);
+    }
+  });
+
   it("maps scores to documented interpretation bands", () => {
     expect(scoreLabel(100)).toBe("Excellent");
     expect(scoreLabel(90)).toBe("Excellent");

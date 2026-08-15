@@ -6,7 +6,17 @@ import { displayPath } from "../../../src/cli/check.js";
 
 describe("parseCheckOptions", () => {
   it("defaults to the current directory and text format", () => {
-    expect(parseCheckOptions([])).toStrictEqual({ path: ".", format: "text", help: false });
+    expect(parseCheckOptions([])).toStrictEqual({
+      path: ".",
+      format: "text",
+      help: false,
+      version: false,
+    });
+  });
+
+  it("accepts the flags the help text advertises", () => {
+    expect(parseCheckOptions(["--help"]).help).toBe(true);
+    expect(parseCheckOptions(["--version"]).version).toBe(true);
   });
 
   it("accepts a positional path", () => {
