@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-`agent-ready` is pre-1.0. Security fixes are released on the latest `0.x` line
+`agentworthy` is pre-1.0. Security fixes are released on the latest `0.x` line
 only.
 
 | Version | Supported |
@@ -15,8 +15,8 @@ only.
 Please do not open a public issue for a security problem.
 
 Report it privately through
-[GitHub Security Advisories](https://github.com/kiyohara1021/agent-ready/security/advisories/new).
-If that is not available to you, email **kiyohara@plan-k.co.jp** with `agent-ready`
+[GitHub Security Advisories](https://github.com/kiyohara1021/agentworthy/security/advisories/new).
+If that is not available to you, email **kiyohara@plan-k.co.jp** with `agentworthy`
 in the subject line.
 
 Useful details:
@@ -39,7 +39,7 @@ publishing details.
 
 ## Threat model
 
-`agent-ready check` is a local, read-only analysis of a directory you point it
+`agentworthy check` is a local, read-only analysis of a directory you point it
 at. It does not:
 
 - send repository content anywhere
@@ -66,5 +66,5 @@ Reports that are especially welcome:
 
 - a readiness score you disagree with — that is a detector or scoring issue, so
   open a normal issue
-- vulnerabilities in the repository *being analyzed*; `agent-ready` is not a
+- vulnerabilities in the repository *being analyzed*; `agentworthy` is not a
   security scanner for your project's dependencies or code

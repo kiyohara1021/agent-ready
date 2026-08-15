@@ -17,7 +17,7 @@ First public release. Message: **audit coding-agent readiness in one command.**
 
 ### Added
 
-- `agent-ready check [path]` — a deterministic, local, read-only readiness audit
+- `agentworthy check [path]` — a deterministic, local, read-only readiness audit
   of a repository, reported as an Agent Readiness Score out of 100.
 - Four scored categories — Instructions (30), Automation (25), Repository
   Context (25), and Safety (20) — documented in

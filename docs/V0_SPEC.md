@@ -4,29 +4,29 @@
 
 Target release: `0.1.0`
 
-This document defines the minimum shippable version of `agent-ready`.
+This document defines the minimum shippable version of `agentworthy`.
 
 Anything not explicitly required here should be deferred unless it is necessary for correctness, portability, security, or maintainability.
 
 ## Primary command
 
 ```bash
-agent-ready check
+agentworthy check
 ```
 
 The same command must work through:
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 ## Supported invocation
 
 ```bash
-agent-ready check
-agent-ready check .
-agent-ready check ../my-project
-agent-ready check /absolute/path/to/project
+agentworthy check
+agentworthy check .
+agentworthy check ../my-project
+agentworthy check /absolute/path/to/project
 ```
 
 The path defaults to the current working directory.
@@ -115,7 +115,7 @@ Do not rely on color alone.
 Required:
 
 ```bash
-agent-ready check --format json
+agentworthy check --format json
 ```
 
 Initial schema:
@@ -163,7 +163,7 @@ The exact schema may evolve before `1.0.0`, but changes must be intentional and 
 Required:
 
 ```bash
-agent-ready check --min-score 80
+agentworthy check --min-score 80
 ```
 
 Behavior:
@@ -328,7 +328,7 @@ Important behavior must be tested with repository fixtures rather than excessive
 
 `0.1.0` is ready when:
 
-- `npx agent-ready check` works
+- `npx agentworthy check` works
 - text output is readable
 - JSON output is stable enough for CI
 - threshold mode works

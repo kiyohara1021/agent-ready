@@ -1,6 +1,6 @@
 # sample-repo
 
-A small fixture repository used by `agent-ready` tests.
+A small fixture repository used by `agentworthy` tests.
 
 ## Setup
 

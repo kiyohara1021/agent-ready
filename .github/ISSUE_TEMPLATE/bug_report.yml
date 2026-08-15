@@ -1,5 +1,5 @@
 name: Bug report
-description: agent-ready crashed, or behaved differently from its documentation
+description: agentworthy crashed, or behaved differently from its documentation
 labels: ["bug"]
 body:
   - type: markdown
@@ -15,7 +15,7 @@ body:
       label: Command
       description: The exact command you ran.
       render: bash
-      placeholder: npx agent-ready check ./my-project --format json
+      placeholder: npx agentworthy check ./my-project --format json
     validations:
       required: true
 
@@ -51,7 +51,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: agent-ready version
+      label: agentworthy version
       placeholder: "0.1.0"
     validations:
       required: true

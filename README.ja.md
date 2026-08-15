@@ -1,9 +1,9 @@
-# agent-ready
+# agentworthy
 
 **そのリポジトリ、コーディングエージェントを迎える準備はできていますか？**
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 ```text
@@ -28,9 +28,9 @@ Codex、Claude Code、Cursor などのコーディングエージェントがリ
 ## デモ
 
 <!--
-  デモ GIF のプレースホルダーです。実在するリポジトリで `npx agent-ready check` を
+  デモ GIF のプレースホルダーです。実在するリポジトリで `npx agentworthy check` を
   録画し、docs/assets/demo.gif として保存したうえで、このコメントを
-  ![agent-ready check](docs/assets/demo.gif) に置き換えてください。
+  ![agentworthy check](docs/assets/demo.gif) に置き換えてください。
   録画手順: docs/assets/README.md
 -->
 
@@ -46,7 +46,7 @@ _ターミナル GIF は未収録です。下の[出力例](#出力例)は、こ
 人間なら誰かに聞いて回避できますが、エージェントにはそれができません。だから推測し、
 その推測の誤りがそのまま誤ったプルリクエストになります。
 
-`agent-ready` が答えるのは、次の 1 つの問いだけです。
+`agentworthy` が答えるのは、次の 1 つの問いだけです。
 
 > コーディングエージェントは、このリポジトリを推測に頼らず理解し、検証し、安全に変更
 > できるか？
@@ -57,19 +57,19 @@ _ターミナル GIF は未収録です。下の[出力例](#出力例)は、こ
 ## クイックスタート
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 パスを指定して解析することもできます。
 
 ```bash
-npx agent-ready check ../my-project
+npx agentworthy check ../my-project
 ```
 
 Node.js 22 以上が必要です。グローバルインストールも可能です。
 
 ```bash
-npm install -g agent-ready
+npm install -g agentworthy
 ```
 
 オプション:
@@ -88,7 +88,7 @@ npm install -g agent-ready
 このリポジトリ自身に対して実行した、実際の出力です。
 
 ```text
-agent-ready 0.1.0
+agentworthy 0.1.0
 
 Agent Readiness: 86 / 100 — Good
 
@@ -172,7 +172,7 @@ Score: 86/100
 準備度が後退したらビルドを失敗させます。
 
 ```yaml
-- run: npx agent-ready check --min-score 80
+- run: npx agentworthy check --min-score 80
 ```
 
 終了コード `2` は閾値未達を意味します。説明は stderr に出るため、stdout の JSON は
@@ -182,7 +182,7 @@ Score: 86/100
 ダッシュボードや独自ゲート向けの機械可読出力:
 
 ```bash
-npx agent-ready check --format json | jq '.score'
+npx agentworthy check --format json | jq '.score'
 ```
 
 JSON レポートはバージョン管理されており（`schemaVersion: 1`）、カテゴリー、検出結果、
@@ -202,8 +202,8 @@ Java（Maven / Gradle）· .NET · Elixir · Make
 
 ## 類似ツールとの違い
 
-`agent-ready` はリポジトリ内容をパッケージ化するツールの代替ではなく、補完関係にあります。
-それらはエージェントに渡す**コンテキストを準備する**ツールであり、`agent-ready` は
+`agentworthy` はリポジトリ内容をパッケージ化するツールの代替ではなく、補完関係にあります。
+それらはエージェントに渡す**コンテキストを準備する**ツールであり、`agentworthy` は
 エージェントが**作業する場であるリポジトリ自体**を監査します。
 
 | ツール | 主な目的 |
@@ -211,11 +211,11 @@ Java（Maven / Gradle）· .NET · Elixir · Make
 | [Repomix](https://github.com/yamadashy/repomix) | リポジトリ内容を AI 向けにパッケージ化する |
 | [Gitingest](https://github.com/cyclotruc/gitingest) | リポジトリを LLM 向けダイジェストに変換する |
 | [code2prompt](https://github.com/mufeedvh/code2prompt) | コードベースをプロンプト向けテキストにする |
-| **agent-ready** | リポジトリがコーディングエージェントを迎える準備ができているか監査する |
+| **agentworthy** | リポジトリがコーディングエージェントを迎える準備ができているか監査する |
 
 ```text
 Repomix / Gitingest / code2prompt   リポジトリ → コンテキスト束
-agent-ready                         リポジトリ → 準備度の監査
+agentworthy                         リポジトリ → 準備度の監査
 ```
 
 併用は理にかなっています。監査で見つかった欠落を埋めてから、パッケージ化する価値のある

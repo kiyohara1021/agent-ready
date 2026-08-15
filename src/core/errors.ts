@@ -2,7 +2,7 @@
  * Domain errors. The CLI turns these into concise messages on stderr; internal
  * stack traces are never part of normal output.
  */
-export abstract class AgentReadyError extends Error {
+export abstract class AgentWorthyError extends Error {
   abstract readonly code: string;
 
   constructor(message: string, options?: { cause?: unknown }) {
@@ -11,7 +11,7 @@ export abstract class AgentReadyError extends Error {
   }
 }
 
-export class RepositoryNotFoundError extends AgentReadyError {
+export class RepositoryNotFoundError extends AgentWorthyError {
   readonly code = "REPOSITORY_NOT_FOUND";
 
   constructor(readonly path: string) {
@@ -19,7 +19,7 @@ export class RepositoryNotFoundError extends AgentReadyError {
   }
 }
 
-export class RepositoryUnreadableError extends AgentReadyError {
+export class RepositoryUnreadableError extends AgentWorthyError {
   readonly code = "REPOSITORY_UNREADABLE";
 
   constructor(
@@ -30,10 +30,10 @@ export class RepositoryUnreadableError extends AgentReadyError {
   }
 }
 
-export class InvalidOptionError extends AgentReadyError {
+export class InvalidOptionError extends AgentWorthyError {
   readonly code = "INVALID_OPTION";
 }
 
-export class AnalysisError extends AgentReadyError {
+export class AnalysisError extends AgentWorthyError {
   readonly code = "ANALYSIS_FAILED";
 }

@@ -2,7 +2,7 @@
 
 ## Project goal
 
-`agent-ready` is a deterministic static-analysis CLI that evaluates how well a repository is prepared for coding agents.
+`agentworthy` is a deterministic static-analysis CLI that evaluates how well a repository is prepared for coding agents.
 
 Its job is to analyze repository readiness, not to act as a coding agent.
 
@@ -109,7 +109,7 @@ Do not place detector or scoring logic directly in CLI handlers.
 
 ## Read-only guarantee
 
-`agent-ready check` is read-only.
+`agentworthy check` is read-only.
 
 It must not create, update, or delete files in the analyzed repository.
 
@@ -153,7 +153,7 @@ It is acceptable for v0.x support to be incomplete. It is not acceptable to hard
 The primary command is:
 
 ```bash
-agent-ready check
+agentworthy check
 ```
 
 Useful defaults are preferred over additional flags.

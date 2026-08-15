@@ -7,7 +7,7 @@ one-off screen capture.
 ## What to record
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 Run it against a **realistic repository** — one with genuine gaps. A repository
@@ -27,7 +27,7 @@ Set FontSize 16
 Set Width 1200
 Set Height 800
 Set Padding 20
-Type "npx agent-ready check"
+Type "npx agentworthy check"
 Enter
 Sleep 6s
 ```
@@ -50,7 +50,7 @@ Save the file as `docs/assets/demo.gif`, then replace the placeholder comment in
 both [README.md](../../README.md) and [README.ja.md](../../README.ja.md) with:
 
 ```markdown
-![agent-ready check](docs/assets/demo.gif)
+![agentworthy check](docs/assets/demo.gif)
 ```
 
 Remove the "not recorded yet" note in the same change.

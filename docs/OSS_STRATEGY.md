@@ -2,7 +2,7 @@
 
 ## Objective
 
-`agent-ready` is not being built only as a private utility.
+`agentworthy` is not being built only as a private utility.
 
 The repository should be designed for public adoption and discoverability from the beginning.
 
@@ -55,11 +55,11 @@ README first screen should show:
 Example:
 
 ```text
-# agent-ready
+# agentworthy
 
 Is your repository ready for coding agents?
 
-$ npx agent-ready check
+$ npx agentworthy check
 
 Agent Readiness: 78 / 100
 ```
@@ -108,7 +108,7 @@ Preferred:
 Show:
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 and a polished result.
@@ -120,7 +120,7 @@ The demo repository should be realistic and not obviously staged only to produce
 The ideal first use is:
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 Requirements:
@@ -181,7 +181,7 @@ Use only topics that accurately describe the project.
 
 Before public launch:
 
-- [x] `npx agent-ready check` works — verified from a packed tarball; see the open item below
+- [x] `npx agentworthy check` works — verified from a packed tarball; see the open item below
 - [ ] npm package published
 - [x] macOS CI
 - [x] Linux CI
@@ -210,7 +210,7 @@ Before public launch:
 Remaining before the repository goes public:
 
 1. Record the terminal demo GIF.
-2. Publish `0.1.0` to npm, then confirm `npx agent-ready check` from a fresh
+2. Publish `0.1.0` to npm, then confirm `npx agentworthy check` from a fresh
    environment. Until it is published, the README's `npx` instruction is
    accurate only for a locally packed tarball.
 3. Set the GitHub repository description and topics.
@@ -306,7 +306,7 @@ Example:
 | Repomix | Pack repository content for AI |
 | Gitingest | Convert a repository into an LLM-friendly digest |
 | code2prompt | Turn a codebase into prompt-ready text |
-| agent-ready | Audit whether the repository is prepared for coding agents |
+| agentworthy | Audit whether the repository is prepared for coding agents |
 
 Do not attack competitors.
 
@@ -341,14 +341,14 @@ Weak:
 
 ## Dogfooding
 
-Run `agent-ready` against its own repository.
+Run `agentworthy` against its own repository.
 
 The repository should ideally maintain a high readiness score, but never distort scoring just to reach 100.
 
 Add CI:
 
 ```bash
-npx agent-ready check --min-score 85
+npx agentworthy check --min-score 85
 ```
 
 after the package and self-analysis flow are stable.
@@ -359,7 +359,7 @@ detector heuristics to tighten without a false CI failure. The threshold is a
 ratchet — raise it as the repository genuinely improves. The two remaining
 self-findings, dependency automation and secret-path exclusion, are real gaps
 rather than scoring artifacts, and closing them is what should move the number.
-Switch the command to `npx agent-ready` once the package is published.
+Switch the command to `npx agentworthy` once the package is published.
 
 ## Public score examples
 
@@ -388,7 +388,7 @@ A broken `npx` experience can permanently hurt first impressions.
 Do not launch publicly until:
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 works cleanly from a fresh environment.

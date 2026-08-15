@@ -2,7 +2,7 @@
 
 ## Our pledge
 
-We want participation in `agent-ready` to be a harassment-free experience for
+We want participation in `agentworthy` to be a harassment-free experience for
 everyone, regardless of age, body size, visible or invisible disability,
 ethnicity, sex characteristics, gender identity and expression, level of
 experience, education, socio-economic status, nationality, personal appearance,

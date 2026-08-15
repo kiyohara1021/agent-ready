@@ -101,7 +101,7 @@ export function renderTextReport(result: AnalysisResult): string {
 
   const lines: string[] = [];
 
-  lines.push(`agent-ready ${TOOL_VERSION}`);
+  lines.push(`agentworthy ${TOOL_VERSION}`);
   lines.push("");
   lines.push(
     `Agent Readiness: ${String(result.score)} / 100 — ${scoreLabel(result.score)}`,

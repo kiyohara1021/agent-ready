@@ -2,7 +2,7 @@
 
 ## Overview
 
-`agent-ready` is a read-only repository analyzer.
+`agentworthy` is a read-only repository analyzer.
 
 Core flow:
 

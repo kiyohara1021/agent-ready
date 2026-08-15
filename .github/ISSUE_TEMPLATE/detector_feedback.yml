@@ -7,9 +7,9 @@ body:
       value: |
         Detector heuristics are the core of this project, so real-world cases
         where a score is wrong are valuable. Please read
-        [docs/DETECTORS.md](https://github.com/kiyohara1021/agent-ready/blob/main/docs/DETECTORS.md)
+        [docs/DETECTORS.md](https://github.com/kiyohara1021/agentworthy/blob/main/docs/DETECTORS.md)
         and
-        [docs/SCORING.md](https://github.com/kiyohara1021/agent-ready/blob/main/docs/SCORING.md)
+        [docs/SCORING.md](https://github.com/kiyohara1021/agentworthy/blob/main/docs/SCORING.md)
         first, so the discussion starts from the documented intent.
 
   - type: dropdown
@@ -61,7 +61,7 @@ body:
       label: Product boundaries
       description: |
         Proposals stay inside the boundaries in
-        [PRODUCT.md](https://github.com/kiyohara1021/agent-ready/blob/main/PRODUCT.md).
+        [PRODUCT.md](https://github.com/kiyohara1021/agentworthy/blob/main/PRODUCT.md).
       options:
         - label: This does not require an LLM or any network call.
           required: true
