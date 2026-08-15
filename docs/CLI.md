@@ -39,24 +39,32 @@ agent-ready 0.1.0
 
 Agent Readiness: 78 / 100 — Good
 
-Instructions                     24 / 30
-✓ AGENTS.md detected
-✓ Test instructions detected
-△ Architecture guidance is missing
+Instructions                                      24 / 30
+  ✓ AGENTS.md provides project-specific guidance  instructions.agents-md 8/10
+  ✓ Setup instructions are documented             instructions.setup 5/5
+  ✓ Test instructions are documented              instructions.tests 5/5
+  ✓ Quality instructions are documented           instructions.quality 5/5
+  △ Architecture guidance is thin                 instructions.architecture 1/5
 
-Automation                       21 / 25
-✓ Test command detected
-✓ Lint command detected
-✓ CI workflow detected
-△ Dependency update automation not detected
+Automation                                        21 / 25
+  ✓ A test command is discoverable                automation.tests 5/5
+  ✓ A lint command is discoverable                automation.lint 5/5
+  ✓ A type-check command is discoverable          automation.typecheck 5/5
+  ✓ CI validates changes                          automation.ci 5/5
+  △ Dependency automation declares no updates     automation.dependencies 1/5
 
-Repository Context               18 / 25
-✓ README detected
-△ Architecture documentation is limited
+Repository Context                                18 / 25
+  ✓ README explains the project                   context.readme 5/5
+  △ Architecture documentation is limited         context.architecture 2/5
+  ✓ Project metadata is complete                  context.metadata 5/5
+  △ Ignore rules are partial                      context.ignore 3/5
+  △ Generated output is only partly separated     context.generated 3/5
 
-Safety                           15 / 20
-✓ .gitignore detected
-△ SECURITY.md is missing
+Safety                                            15 / 20
+  ✓ .gitignore excludes local artifacts           safety.gitignore 5/5
+  ✓ Secret-bearing files are excluded             safety.secrets 5/5
+  ✕ No security policy                            safety.security-policy 0/5
+  ✓ A dependency lockfile is committed            safety.lockfile 5/5
 
 Recommendations
 
@@ -66,6 +74,14 @@ Recommendations
 
 Score: 78/100
 ```
+
+Each finding line carries its detector id and score contribution, so every point
+is traceable to a documented check in `SCORING.md`. A check that does not apply
+to the repository reports `n/a` instead of a score, and is excluded from the
+category total.
+
+The label column widens to fit the longest title in the report, so
+contributions stay aligned instead of wrapping unpredictably.
 
 Exact visual formatting may evolve, but the information hierarchy should remain:
 
@@ -116,7 +132,17 @@ Accepted range:
 If actual score is lower:
 
 - output full report
+- write a one-line explanation to stderr
 - exit with code `2`
+
+The explanation is about the invocation rather than the repository, so it stays
+off stdout and leaves JSON output parseable:
+
+```text
+Agent readiness 78 is below the required minimum of 90.
+```
+
+Values outside `0–100`, and non-integer values, fail with exit code `1`.
 
 ### `--help`
 
@@ -139,6 +165,13 @@ Options:
 
 Print only version or conventional CLI version output.
 
+Accepted both at the root and on `check`, matching the help text:
+
+```bash
+agent-ready --version
+agent-ready check --version
+```
+
 ## JSON mode
 
 JSON mode must:
@@ -149,6 +182,26 @@ JSON mode must:
 - keep errors on stderr
 - include schema version
 - include tool version
+
+Top-level keys, in emitted order:
+
+```text
+schemaVersion   integer, currently 1
+toolVersion     package version string
+repository      { path }
+score           0–100 integer
+categories      [{ id, score, maxScore }]
+findings        [{ id, category, status, title, message, score, maxScore,
+                   applicable, evidence? }]
+recommendations [{ findingId, priority, message }]
+```
+
+`evidence` is present only when a detector recorded any, and carries file paths
+and labels rather than file contents, so secret values are never emitted.
+
+Arrays follow the same order as the text report: categories and findings in
+documented category order, recommendations in the order defined by
+`SCORING.md`.
 
 Example:
 
@@ -170,6 +223,7 @@ Successful analysis result.
 - unreadable path
 - runtime errors
 - warnings that are about the tool itself rather than repository readiness
+- the reason an invocation exited `2`
 
 Repository findings belong in the report, not stderr.
 
