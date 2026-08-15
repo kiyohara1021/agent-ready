@@ -112,6 +112,23 @@ export const detectEcosystems = perContext((context: RepositoryContext) => {
 });
 
 /**
+ * `true` when the repository is written in TypeScript.
+ *
+ * Used for applicability: a plain JavaScript project has no conventional
+ * type-check step, while a TypeScript project does.
+ */
+export const usesTypeScript = perContext((context: RepositoryContext) =>
+  Promise.resolve(
+    context.files.all.some((file) => {
+      const name = basename(file.path);
+      if (name === "tsconfig.json") return true;
+      // Declaration files can appear in a plain JavaScript project.
+      return (name.endsWith(".ts") && !name.endsWith(".d.ts")) || name.endsWith(".tsx");
+    }),
+  ),
+);
+
+/**
  * `true` when the repository contains source files.
  *
  * Used for applicability: a documentation-only repository is not expected to

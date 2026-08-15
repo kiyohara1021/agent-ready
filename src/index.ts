@@ -11,6 +11,11 @@ export {
   testInstructionsDetector,
   qualityInstructionsDetector,
   architectureInstructionsDetector,
+  testAutomationDetector,
+  lintAutomationDetector,
+  typecheckAutomationDetector,
+  ciAutomationDetector,
+  dependencyAutomationDetector,
 } from "./detectors/index.js";
 export { renderJsonReport } from "./reporters/json.js";
 export { renderTextReport } from "./reporters/text.js";

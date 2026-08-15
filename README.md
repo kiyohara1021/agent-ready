@@ -9,9 +9,10 @@ Analysis is local, read-only, and requires no LLM API, account, or telemetry.
 
 ## Status
 
-Early development. The CLI skeleton and analysis pipeline exist; the readiness
-detectors described in [docs/DETECTORS.md](docs/DETECTORS.md) and the weighted scoring model in
-[docs/SCORING.md](docs/SCORING.md) are not implemented yet, so scores are not yet meaningful.
+Early development. The Instructions and Automation detectors described in
+[docs/DETECTORS.md](docs/DETECTORS.md) are implemented; the Repository Context
+and Safety detectors are not, so a score reflects only part of the model in
+[docs/SCORING.md](docs/SCORING.md).
 
 ## Usage
 

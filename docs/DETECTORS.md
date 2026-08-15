@@ -58,6 +58,34 @@ segments, so `uv run pytest`, `./vendor/bin/phpstan analyse`, and
 `npm ci && npm test` all resolve correctly, while `color: black;` in a CSS
 example does not resolve to the Black formatter.
 
+## What counts as "discoverable"
+
+The Automation detectors ask a different question from the Instructions
+detectors: not whether documentation explains a command, but whether one can be
+inferred from the repository's own metadata. An entry point is discoverable when
+it comes from any of:
+
+```text
+script      a manifest script or task-runner target
+            (package.json, composer.json, Makefile, justfile)
+config      test runner or analyzer configuration
+            (phpunit.xml, pytest.ini, tox.ini, vitest.config.*, eslint.config.*,
+             phpstan.neon, mypy.ini, [tool.*] sections in pyproject.toml, …)
+manifest    a command the ecosystem provides without configuration
+            (cargo test, go test ./..., mvn test, ./gradlew test, …)
+workflow    a command a CI workflow runs
+```
+
+A `manifest` entry point is weaker than the others, because the command exists
+whether or not the project intends it. Conventional test commands therefore
+count only when the repository actually contains tests, and conventional lint
+commands (`go vet`, `cargo clippy`, `dart analyze`) never earn full credit on
+their own — see `automation.lint`.
+
+Scaffolding placeholders are not entry points. `npm init`'s default
+`"test": "echo \"Error: no test specified\" && exit 1"` is a script whose only
+job is to fail, and it is ignored.
+
 ## General rules
 
 Detectors must:
@@ -308,49 +336,65 @@ scoring rationale distinct rather than double-counting the same conclusion.
 
 ## `automation.tests`
 
+### Why it matters
+
+An agent that cannot run the tests cannot check its own work. This detector asks
+only whether a command is discoverable, not whether documentation explains it;
+`instructions.tests` scores the documentation.
+
 ### Evidence by ecosystem
 
 Node:
 
 ```text
 package.json scripts.test
+vitest.config.*, jest.config.*, playwright.config.*, cypress.config.*
 ```
 
 Composer:
 
 ```text
 composer.json scripts
+phpunit.xml, phpunit.xml.dist, Pest.php
 ```
 
 Python:
 
 ```text
-pyproject.toml
+pyproject.toml [tool.pytest.ini_options], [tool.tox]
+pytest.ini
 tox.ini
 noxfile.py
+setup.cfg [tool:pytest]
 Makefile
 ```
 
 Rust:
 
 ```text
-Cargo.toml
+Cargo.toml            (cargo test, when tests exist)
 CI references to cargo test
 ```
 
 Go:
 
 ```text
-go.mod
+go.mod                (go test ./..., when tests exist)
 CI or Makefile references to go test
 ```
 
-Flutter:
+Flutter, Swift, Elixir, Java, .NET:
 
 ```text
-pubspec.yaml
-CI references to flutter test
+pubspec.yaml, Package.swift, mix.exs, pom.xml, build.gradle*, *.csproj
+CI references to the ecosystem test command
 ```
+
+### Partial scoring signals
+
+- a test entry point is discoverable
+- a test suite exists in the repository
+- CI runs the tests
 
 ### Pass
 
@@ -360,53 +404,140 @@ A reliable test entry point is discoverable.
 
 Testing ecosystem exists but no clear command is detected.
 
+A repository that contains tests, or a manifest for an ecosystem that could run
+them, is warned rather than failed.
+
+### Fail
+
+No entry point, no test suite, and no testable ecosystem manifest.
+
 ### Not applicable
 
 Repository clearly contains no executable/testable software.
+
+### False-positive considerations
+
+An ecosystem's built-in runner counts only when the repository actually contains
+tests, and scaffolding placeholder scripts are ignored.
 
 ---
 
 ## `automation.lint`
 
-Potential signals:
+### Why it matters
+
+Linting and formatting reject changes that tests accept, and an agent should be
+able to run them without being told how.
+
+### Evidence
+
+Lint scripts and task-runner targets, checked-in linter configuration, and lint
+steps in CI. Recognized tooling includes:
 
 ```text
 eslint
 biome
+prettier
 pint
 php-cs-fixer
+phpcs
 ruff
 flake8
+black
 golangci-lint
 clippy
+rustfmt
+rubocop
 swiftlint
+detekt
 dart analyze
 ```
 
-Scoring should account for ecosystem conventions.
+### Partial scoring signals
+
+- a lint entry point is discoverable
+- it is backed by checked-in tool configuration
+- CI runs it
+
+### Pass
+
+A lint or format command can be inferred.
+
+### Warning
+
+The ecosystem ships a static check that works without configuration —
+`go vet ./...`, `cargo clippy`, `dart analyze` — but nothing in the repository
+runs it. The capability exists; it is simply not wired up.
+
+### Fail
+
+No lint script, linter configuration, or CI lint step, in an ecosystem with no
+built-in check.
+
+### Not applicable
+
+The repository contains no source files and no project manifest.
 
 ---
 
 ## `automation.typecheck`
 
-Potential signals:
+### Why it matters
+
+Static analysis rejects whole classes of broken change before a test suite runs.
+
+### Evidence
+
+Type-check scripts, checked-in analyzer configuration, and CI steps:
 
 ```text
 tsc
 vue-tsc
+svelte-check
 phpstan
 larastan
+psalm
 mypy
 pyright
-cargo check
 dart analyze
+go vet
 ```
 
-Do not require a separate type-check command in ecosystems where it is not meaningful.
+### Partial scoring signals
+
+- a type-check entry point is discoverable
+- it is backed by checked-in analyzer configuration
+- CI runs it
+
+### Pass
+
+A type-check or static-analysis command can be inferred.
+
+### Fail
+
+The ecosystem conventionally has a separate type-check step, but none is
+configured.
+
+### Not applicable
+
+The ecosystem has no conventional type-check step beyond compiling. A separate
+step is expected only for PHP, Python, and TypeScript — a repository is treated
+as TypeScript when it has a `tsconfig.json` or `.ts`/`.tsx` sources. Go, Rust,
+Ruby, Swift, Java, .NET, Elixir, and plain JavaScript repositories are excluded
+from the score rather than failed.
+
+Commands that cover both linting and type analysis in their ecosystem — such as
+`dart analyze` or `go vet` — count for both, so an ecosystem that has one makes
+the check applicable again.
 
 ---
 
 ## `automation.ci`
+
+### Why it matters
+
+CI is the shared definition of "this change is acceptable", and an agent's work
+is judged by it.
 
 ### Initial support
 
@@ -417,21 +548,51 @@ GitHub Actions:
 .github/workflows/*.yaml
 ```
 
+### Partial scoring signals
+
+- a workflow exists
+- a test step runs
+- a lint, type-check, or build step runs
+
+A build shares the third point with static analysis rather than earning one of
+its own, so a library with nothing to build can still reach full marks.
+
 ### Pass
 
 CI exists and evidence suggests meaningful validation.
 
 ### Warning
 
-Workflow files exist but validation is unclear.
+Workflow files exist but validation is unclear, or CI is configured through a
+system whose files are recognized but not parsed:
+
+```text
+.gitlab-ci.yml
+.circleci/config.yml
+azure-pipelines.yml
+Jenkinsfile
+.travis.yml
+bitbucket-pipelines.yml
+.drone.yml
+.woodpecker.yml
+```
+
+Presence earns partial credit; no claim is made about what those files run.
 
 ### Fail
 
 No CI detected.
 
+### Not applicable
+
+The repository contains no source files and no project manifest, so there is
+nothing for CI to validate.
+
 ### Heuristics
 
-Look for known command references such as:
+`run:` steps are collected — both inline and block-scalar form — and classified
+with the same command catalog the rest of discovery uses. Known command
+references include:
 
 ```text
 test
@@ -442,20 +603,69 @@ check
 build
 ```
 
-Do not attempt a full shell interpreter.
+A short list of actions that perform validation themselves, such as
+`golangci/golangci-lint-action`, is also recognized.
+
+There is no YAML object model, no expression evaluation, and no shell
+interpreter. Step names are prose and are never treated as evidence: a step
+called "Run the tests" that delegates to an opaque script reads as uncertain,
+which is a warning, not a failure.
 
 ---
 
 ## `automation.dependencies`
 
-Detect:
+### Why it matters
+
+Dependency drift becomes security work and broken builds, and it is not
+something a coding agent can discover on its own.
+
+### Evidence
 
 ```text
 .github/dependabot.yml
 .github/dependabot.yaml
 renovate.json
 renovate.json5
+.renovaterc
+.renovaterc.json
+.renovaterc.json5
+.github/renovate.json
+.github/renovate.json5
+.gitlab/renovate.json
+package.json          "renovate" key
+.github/workflows/*   renovatebot/github-action
 ```
+
+### Partial scoring signals
+
+- dependency update automation is configured
+- it covers a package ecosystem the repository actually uses
+- it covers CI workflow/action versions
+
+Dependabot declares each update target explicitly, so coverage is read from its
+`package-ecosystem` entries and matched against the detected ecosystems.
+Renovate enables every manager it detects, including GitHub Actions, so a
+Renovate configuration is credited with both coverage points without parsing it
+further.
+
+### Pass
+
+Dependency update automation is configured.
+
+### Warning
+
+A configuration file exists but declares no update targets, so nothing is
+actually kept up to date.
+
+### Fail
+
+No dependency automation.
+
+### Not applicable
+
+No dependency manifest and no CI workflow, so there is nothing to keep up to
+date.
 
 Additional ecosystem tooling may be added later.
 

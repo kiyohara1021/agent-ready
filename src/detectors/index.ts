@@ -1,4 +1,9 @@
 import type { Detector } from "../core/types.js";
+import { ciAutomationDetector } from "./automation/ci.js";
+import { dependencyAutomationDetector } from "./automation/dependencies.js";
+import { lintAutomationDetector } from "./automation/lint.js";
+import { testAutomationDetector } from "./automation/tests.js";
+import { typecheckAutomationDetector } from "./automation/typecheck.js";
 import { agentsMdDetector } from "./instructions/agents-md.js";
 import { architectureInstructionsDetector } from "./instructions/architecture.js";
 import { qualityInstructionsDetector } from "./instructions/quality.js";
@@ -18,6 +23,11 @@ export const defaultDetectors: readonly Detector[] = [
   testInstructionsDetector,
   qualityInstructionsDetector,
   architectureInstructionsDetector,
+  testAutomationDetector,
+  lintAutomationDetector,
+  typecheckAutomationDetector,
+  ciAutomationDetector,
+  dependencyAutomationDetector,
 ];
 
 export {
@@ -26,4 +36,9 @@ export {
   testInstructionsDetector,
   qualityInstructionsDetector,
   architectureInstructionsDetector,
+  testAutomationDetector,
+  lintAutomationDetector,
+  typecheckAutomationDetector,
+  ciAutomationDetector,
+  dependencyAutomationDetector,
 };

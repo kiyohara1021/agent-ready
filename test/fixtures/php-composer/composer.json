@@ -1,0 +1,18 @@
+{
+  "name": "fixtures/php-composer",
+  "description": "Fixture repository modelling a PHP project with automation but thin instructions.",
+  "license": "MIT",
+  "require": {
+    "php": "^8.3"
+  },
+  "require-dev": {
+    "laravel/pint": "^1.18",
+    "phpstan/phpstan": "^2.0",
+    "phpunit/phpunit": "^11.4"
+  },
+  "scripts": {
+    "test": "phpunit",
+    "lint": "pint --test",
+    "analyse": "phpstan analyse"
+  }
+}
