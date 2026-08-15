@@ -55,4 +55,4 @@ jobs:
       # raise it when the score genuinely improves, and never lower a detector's
       # standards to keep this job green.
       - name: Audit this repository
-        run: node dist/cli/index.js check . --min-score 80
+        run: node dist/cli/index.js check . --min-score 85

@@ -1,5 +1,36 @@
+# Dependencies and build output
 node_modules/
 dist/
 coverage/
+
+# Local files
 *.log
 .DS_Store
+
+# Environment files. Values stay local; commit a template instead.
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Private keys and key stores. Public material (*.pub, certificates) is fine.
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.ppk
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+
+# Credential files
+credentials.json
+*.credentials.json
+*service-account*.json
+.netrc
+.pgpass
+.htpasswd
