@@ -37,7 +37,10 @@ let documentedCategoryTotals: Map<CategoryId, number>;
 let documentedCheckPoints: Map<string, number>;
 
 beforeAll(async () => {
-  const lines = (await readFile(SCORING_DOC, "utf8")).split("\n");
+  // Split on either line ending: Git checks the document out with CRLF on
+  // Windows, and a trailing carriage return would defeat every `$` anchor
+  // below, leaving the parser silently matching nothing.
+  const lines = (await readFile(SCORING_DOC, "utf8")).split(/\r?\n/);
 
   documentedCategoryTotals = new Map();
   documentedCheckPoints = new Map();
