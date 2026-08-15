@@ -1,0 +1,65 @@
+name: Bug report
+description: agent-ready crashed, or behaved differently from its documentation
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. If instead you think a *score* is wrong, please use
+        the "Detector or scoring feedback" template — that is a heuristic
+        question rather than a bug.
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: The exact command you ran.
+      render: bash
+      placeholder: npx agent-ready check ./my-project --format json
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: |
+        Include the output and the exit code (`echo $?`). Please remove anything
+        private before pasting.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repository-shape
+    attributes:
+      label: Repository shape
+      description: |
+        The most useful detail in a report. What does the analyzed repository
+        look like — ecosystems, monorepo layout, unusual files? A minimal
+        directory listing that reproduces the problem is ideal.
+      render: text
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: agent-ready version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: OS and Node.js version
+      placeholder: "macOS 15, Node 22.11.0"
+    validations:
+      required: true

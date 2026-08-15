@@ -181,31 +181,40 @@ Use only topics that accurately describe the project.
 
 Before public launch:
 
-- [ ] `npx agent-ready check` works
+- [x] `npx agent-ready check` works — verified from a packed tarball; see the open item below
 - [ ] npm package published
-- [ ] macOS CI
-- [ ] Linux CI
-- [ ] Windows CI
-- [ ] Node.js 22/24 validated
-- [ ] text output polished
-- [ ] JSON output implemented
-- [ ] `--min-score` implemented
-- [ ] scoring documented
-- [ ] detectors documented
-- [ ] 15+ useful detector signals/checks
-- [ ] strong fixture-based tests
-- [ ] lint/typecheck passing
-- [ ] no known dependency vulnerabilities
-- [ ] README in English
-- [ ] Japanese README or docs
-- [ ] terminal demo/GIF
-- [ ] CONTRIBUTING.md
-- [ ] SECURITY.md
-- [ ] CODE_OF_CONDUCT.md
-- [ ] issue forms/templates
-- [ ] pull-request template
-- [ ] changelog/release notes
-- [ ] clear license
+- [x] macOS CI
+- [x] Linux CI
+- [x] Windows CI
+- [x] Node.js 22/24 validated
+- [x] text output polished
+- [x] JSON output implemented
+- [x] `--min-score` implemented
+- [x] scoring documented
+- [x] detectors documented
+- [x] 15+ useful detector signals/checks — 19 detectors
+- [x] strong fixture-based tests
+- [x] lint/typecheck passing
+- [x] no known dependency vulnerabilities
+- [x] README in English
+- [x] Japanese README or docs — `README.ja.md`
+- [ ] terminal demo/GIF — placeholder in place; recording instructions in `docs/assets/README.md`
+- [x] CONTRIBUTING.md
+- [x] SECURITY.md
+- [x] CODE_OF_CONDUCT.md
+- [x] issue forms/templates
+- [x] pull-request template
+- [x] changelog/release notes
+- [x] clear license — MIT
+
+Remaining before the repository goes public:
+
+1. Record the terminal demo GIF.
+2. Publish `0.1.0` to npm, then confirm `npx agent-ready check` from a fresh
+   environment. Until it is published, the README's `npx` instruction is
+   accurate only for a locally packed tarball.
+3. Set the GitHub repository description and topics.
+4. Date the `0.1.0` entry in `CHANGELOG.md` when the release is tagged.
 
 ## Release strategy
 
@@ -343,6 +352,14 @@ npx agent-ready check --min-score 85
 ```
 
 after the package and self-analysis flow are stable.
+
+Status: CI runs a `dogfood` job that audits this repository with its own build.
+The threshold is currently `80` against a self-score of `86`, leaving room for
+detector heuristics to tighten without a false CI failure. The threshold is a
+ratchet — raise it as the repository genuinely improves. The two remaining
+self-findings, dependency automation and secret-path exclusion, are real gaps
+rather than scoring artifacts, and closing them is what should move the number.
+Switch the command to `npx agent-ready` once the package is published.
 
 ## Public score examples
 
