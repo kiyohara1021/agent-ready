@@ -1,9 +1,18 @@
 {
   "name": "agent-ready",
   "version": "0.1.0",
-  "description": "Is your repository ready for coding agents? A deterministic readiness audit CLI.",
+  "description": "Is your repository ready for coding agents? A deterministic, local, read-only readiness audit CLI for Codex, Claude Code, Cursor and Copilot.",
   "type": "module",
   "license": "MIT",
+  "author": "Yuta Kiyohara",
+  "homepage": "https://github.com/kiyohara1021/agent-ready#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kiyohara1021/agent-ready.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kiyohara1021/agent-ready/issues"
+  },
   "keywords": [
     "coding-agent",
     "agents",
@@ -14,7 +23,12 @@
     "repository",
     "static-analysis",
     "cli",
-    "devex"
+    "devex",
+    "agents-md",
+    "agentic",
+    "repository-analysis",
+    "code-quality",
+    "ci"
   ],
   "bin": {
     "agent-ready": "dist/cli/index.js"
@@ -23,7 +37,11 @@
     ".": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "!dist/**/*.js.map",
+    "docs/SCORING.md",
+    "docs/DETECTORS.md",
+    "CHANGELOG.md"
   ],
   "engines": {
     "node": ">=22"
@@ -33,7 +51,8 @@
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint .",
     "pretest": "npm run build",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepack": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

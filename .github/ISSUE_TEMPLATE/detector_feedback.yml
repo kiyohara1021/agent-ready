@@ -1,0 +1,71 @@
+name: Detector or scoring feedback
+description: A check produced a wrong or unhelpful result, or a new check is worth adding
+labels: ["detector"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Detector heuristics are the core of this project, so real-world cases
+        where a score is wrong are valuable. Please read
+        [docs/DETECTORS.md](https://github.com/kiyohara1021/agent-ready/blob/main/docs/DETECTORS.md)
+        and
+        [docs/SCORING.md](https://github.com/kiyohara1021/agent-ready/blob/main/docs/SCORING.md)
+        first, so the discussion starts from the documented intent.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of feedback is this?
+      options:
+        - False positive — a check passed when it should not have
+        - False negative — a check failed or warned when the repository was fine
+        - Not applicable — a check was scored when it does not apply to this ecosystem
+        - New detector — a readiness signal that is not checked yet
+        - Scoring weight — the points feel wrong relative to other checks
+    validations:
+      required: true
+
+  - type: input
+    id: detector
+    attributes:
+      label: Detector id
+      description: The id printed next to the finding. Leave blank for a new detector.
+      placeholder: "safety.secrets"
+    validations:
+      required: false
+
+  - type: textarea
+    id: repository-shape
+    attributes:
+      label: Repository shape
+      description: |
+        What does the repository look like? Ecosystems, layout, and the specific
+        files involved. A public repository link, or a minimal fixture, is best.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why should the result be different?
+      description: |
+        Ideally in terms of a coding agent: what would an agent guess wrong, or
+        what did it already have enough information to do?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Product boundaries
+      description: |
+        Proposals stay inside the boundaries in
+        [PRODUCT.md](https://github.com/kiyohara1021/agent-ready/blob/main/PRODUCT.md).
+      options:
+        - label: This does not require an LLM or any network call.
+          required: true
+        - label: This is deterministic — the same repository state gives the same result.
+          required: true
+        - label: This cannot be satisfied by creating an empty file.
+          required: true
