@@ -69,6 +69,17 @@ describe("discoverScripts", () => {
     expect(scripts.map((script) => script.command)).toStrictEqual(["just test"]);
   });
 
+  it("does not classify a scaffolding placeholder as a test script", async () => {
+    const scripts = await scriptsFor({
+      "package.json": JSON.stringify({
+        scripts: { test: 'echo "Error: no test specified" && exit 1' },
+      }),
+    });
+
+    expect(scripts.map((script) => script.kinds)).toStrictEqual([["other"]]);
+    expect(scriptsOfKind(scripts, "test")).toStrictEqual([]);
+  });
+
   it("treats a malformed manifest as no evidence rather than an error", async () => {
     expect(await scriptsFor({ "package.json": "{ not json" })).toStrictEqual([]);
   });

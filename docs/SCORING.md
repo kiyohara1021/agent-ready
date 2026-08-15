@@ -132,15 +132,56 @@ ADR index or multiple design documents        +1
 
 A runnable test command can be inferred from known project metadata or build files.
 
+Suggested scoring:
+
+```text
+a test entry point is discoverable            +3
+a test suite exists in the repository         +1
+CI runs the tests                             +1
+
+testing ecosystem but no clear command         1   (instead of the above)
+```
+
+This check is not applicable to a repository with no source files and no project
+manifest, and is then excluded from the denominator.
+
 #### `automation.lint` — 5
 
 A lint/format/static-quality command can be inferred.
+
+Suggested scoring:
+
+```text
+a lint entry point is discoverable            +3
+backed by checked-in tool configuration       +1
+CI runs the lint command                      +1
+
+ecosystem check available but not wired up     1   (instead of the above)
+```
+
+The warning tier keeps ecosystem conventions in view: Go, Rust, and Dart ship a
+static check that runs without configuration, so a repository in those
+ecosystems has the capability even when nothing uses it.
+
+Not applicable to a repository with no source files and no project manifest.
 
 #### `automation.typecheck` — 5
 
 A type-check or static-analysis command can be inferred where the ecosystem reasonably supports one.
 
+Suggested scoring:
+
+```text
+a type-check entry point is discoverable      +3
+backed by checked-in analyzer configuration   +1
+CI runs the type check                        +1
+```
+
 The detector must avoid unfairly penalizing ecosystems where a separate type-check command is not conventional.
+
+A separate step is expected for PHP, Python, and TypeScript. Other ecosystems are
+marked not applicable unless they actually define such a command, so the check
+leaves their score alone rather than reducing it.
 
 #### `automation.ci` — 5
 
@@ -149,6 +190,20 @@ CI is present and appears to validate code.
 Presence alone may earn partial credit.
 
 Higher confidence requires evidence of test/build/lint execution.
+
+Suggested scoring:
+
+```text
+a CI workflow exists                          +2
+a test step runs                              +2
+a lint, type-check, or build step runs        +1
+```
+
+A build shares the third point with static analysis so that a project with
+nothing to build is not capped below full marks. CI configuration for a system
+that is recognized but not parsed earns the presence points only.
+
+Not applicable to a repository with no source files and no project manifest.
 
 #### `automation.dependencies` — 5
 
@@ -159,6 +214,19 @@ Examples:
 - Dependabot
 - Renovate
 - ecosystem-equivalent automation
+
+Suggested scoring:
+
+```text
+dependency update automation is configured    +3
+covers a package ecosystem used here          +1
+covers CI workflow/action versions            +1
+
+configuration exists but declares no updates   1   (instead of the above)
+```
+
+Not applicable when the repository has neither a dependency manifest nor a CI
+workflow.
 
 ### Repository Context — 25 points
 

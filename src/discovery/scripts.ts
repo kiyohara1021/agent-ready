@@ -50,8 +50,16 @@ function safeParseJson(raw: string): unknown {
   }
 }
 
+/**
+ * Scaffolding placeholders, most commonly `npm init`'s default test script.
+ * A script whose only job is to fail is not a validation entry point.
+ */
+const PLACEHOLDER_BODY = /\b(no|not) (test|tests) (specified|implemented|configured)\b/;
+
 function classify(name: string, body: string): ScriptKind[] {
   const lowerName = name.toLowerCase();
+  if (PLACEHOLDER_BODY.test(body.toLowerCase())) return ["other"];
+
   const segments = toCommandSegments(body.toLowerCase().split("\n"));
 
   const kinds = new Set<ScriptKind>();

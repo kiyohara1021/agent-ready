@@ -4,17 +4,11 @@ import type { Evidence } from "../../core/types.js";
 /**
  * Helpers shared by the Instructions detectors.
  *
- * Evidence is capped so that a documentation-heavy repository does not produce
- * an unreadable report, and labels always come from the detector or the command
- * catalog rather than from repository text.
+ * Labels always come from the detector or the command catalog rather than from
+ * repository text, so a report never echoes what a document happens to say.
  */
 
-/** Keeps reports readable; the first entries are the most representative. */
-export const MAX_EVIDENCE = 4;
-
-export function limitEvidence(evidence: readonly Evidence[]): Evidence[] {
-  return evidence.slice(0, MAX_EVIDENCE);
-}
+export { MAX_EVIDENCE, limitEvidence } from "../shared.js";
 
 /**
  * Turns documented-command matches into evidence, one entry per document, so a

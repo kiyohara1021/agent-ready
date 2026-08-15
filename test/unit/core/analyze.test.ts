@@ -39,9 +39,18 @@ describe("analyzeRepository", () => {
       "instructions.tests",
       "instructions.quality",
       "instructions.architecture",
+      "automation.tests",
+      "automation.lint",
+      "automation.typecheck",
+      "automation.ci",
+      "automation.dependencies",
     ]);
-    expect(result.categories).toStrictEqual([{ id: "instructions", score: 17, maxScore: 30 }]);
-    expect(result.score).toBe(57);
+    expect(result.categories).toStrictEqual([
+      { id: "instructions", score: 17, maxScore: 30 },
+      // automation.typecheck does not apply to a plain JavaScript project.
+      { id: "automation", score: 11, maxScore: 20 },
+    ]);
+    expect(result.score).toBe(56);
   });
 
   it("orders findings by category then registration, not completion order", async () => {

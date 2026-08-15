@@ -50,6 +50,9 @@ src/
 │   ├── ecosystems.ts
 │   ├── scripts.ts
 │   ├── tooling.ts
+│   ├── entry-points.ts
+│   ├── workflows.ts
+│   ├── dependency-automation.ts
 │   ├── cache.ts
 │   └── ignores.ts
 │
@@ -281,6 +284,27 @@ CI workflows
 
 Script discovery reports evidence; it does not execute commands.
 
+## Entry point discovery
+
+`discovery/entry-points.ts` answers the Automation detectors' question — "can a
+validation command be inferred?" — by combining four sources into one ordered
+list:
+
+```text
+script      manifest scripts and task-runner targets
+config      test runner and analyzer configuration
+manifest    commands an ecosystem provides without configuration
+workflow    commands a CI workflow runs
+```
+
+Ordering is by source and then by table order, never by traversal order.
+Conventional (`manifest`) test commands count only when the repository contains
+tests, which keeps `cargo test` from being credited to a crate with no tests.
+
+Configuration is parsed as inert data. Target repository JavaScript and
+TypeScript configuration is matched by filename only; it is never imported,
+required, or evaluated.
+
 ## Workflow analysis
 
 v0.1 primarily supports GitHub Actions:
@@ -301,6 +325,16 @@ Extract useful high-level signals:
 Avoid implementing a complete shell parser.
 
 Use conservative heuristics and report uncertainty as warnings.
+
+`discovery/workflows.ts` reads `run:` steps — inline and block-scalar form — and
+`uses:` references, then classifies the commands with the shared catalog. There
+is no YAML object model, no expression evaluation, and no shell interpreter.
+Step names are prose and are never evidence.
+
+Configuration for other CI systems (GitLab CI, CircleCI, Jenkins, and similar)
+is recognized by filename so that `automation.ci` does not report "no CI" for a
+repository that plainly has some. Those files are not parsed, so presence is the
+only claim made about them.
 
 ## AGENTS.md analysis
 
@@ -413,7 +447,9 @@ Preferred detector registration:
 export const detectors: Detector[] = [
   agentsMdDetector,
   setupInstructionsDetector,
-  testCommandDetector,
+  testInstructionsDetector,
+  // ...
+  testAutomationDetector,
   // ...
 ];
 ```

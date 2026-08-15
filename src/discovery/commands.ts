@@ -147,6 +147,11 @@ export const COMMAND_PATTERNS: readonly CommandPattern[] = [
   { label: "biome", kinds: ["lint"], pattern: /^biome (check|lint|ci|format)\b/ },
   { label: "prettier", kinds: ["lint"], pattern: /^(prettier|stylelint)\b/ },
   { label: "php code style", kinds: ["lint"], pattern: /^(pint|php-cs-fixer|phpcs|phpcbf|rector)\b/ },
+  {
+    label: "composer lint",
+    kinds: ["lint"],
+    pattern: /^composer (run-script )?(lint|format|fmt|style|cs|pint)\b/,
+  },
   { label: "ruff", kinds: ["lint"], pattern: /^ruff\b/ },
   { label: "python linter", kinds: ["lint"], pattern: /^(flake8|pylint|black|isort)\b/ },
   { label: "cargo clippy", kinds: ["lint"], pattern: /^cargo (clippy|fmt)\b/ },
@@ -160,6 +165,7 @@ export const COMMAND_PATTERNS: readonly CommandPattern[] = [
   { label: "file linter", kinds: ["lint"], pattern: /^(shellcheck|yamllint|markdownlint|hadolint)\b/ },
   { label: "pre-commit", kinds: ["lint"], pattern: /^pre-commit run\b/ },
   { label: "make lint", kinds: ["lint"], pattern: /^make (lint|fmt|format|style)\b/ },
+  { label: "just lint", kinds: ["lint"], pattern: /^(just|task) (lint|fmt|format|style)\b/ },
   { label: "dart format", kinds: ["lint"], pattern: /^(dart|flutter) format\b/ },
 
   // --- type checking and static analysis --------------------------------------
@@ -183,6 +189,11 @@ export const COMMAND_PATTERNS: readonly CommandPattern[] = [
   { label: "dart analyze", kinds: ["lint", "typecheck"], pattern: /^(dart|flutter) analyze\b/ },
   { label: "sorbet", kinds: ["typecheck"], pattern: /^(srb tc|srb typecheck|sorbet)\b/ },
   { label: "make typecheck", kinds: ["typecheck"], pattern: /^make (typecheck|type-check|types|analyse|analyze)\b/ },
+  {
+    label: "just typecheck",
+    kinds: ["typecheck"],
+    pattern: /^(just|task) (typecheck|type-check|types|analyse|analyze)\b/,
+  },
 ];
 
 /**

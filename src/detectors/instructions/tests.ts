@@ -3,6 +3,7 @@ import {
   findDocumentedCommands,
   repositoryDocumentation,
 } from "../../discovery/documentation.js";
+import { findTestFiles } from "../../discovery/entry-points.js";
 import { hasHeading } from "../../discovery/markdown.js";
 import { discoverScripts, scriptsOfKind } from "../../discovery/scripts.js";
 import type { RepositoryContext } from "../../core/repository-context.js";
@@ -35,10 +36,6 @@ const TEST_HEADING = /\b(test|tests|testing|validation|validate|verify|verificat
 const TEST_GUIDANCE =
   /(before (submitting|committing|opening|pushing|merging)|coverage|watch mode|--watch|--filter|single test|specific test|run a subset)/;
 
-/** Paths that indicate an executable test suite exists. */
-const TEST_PATH = /(^|\/)(tests?|specs?|__tests__)\//;
-const TEST_FILE = /(^|\/)(test_[^/]+\.py|[^/]+[._](test|spec)\.[a-z]+|[^/]+_test\.[a-z]+)$/;
-
 function finding(overrides: Omit<Finding, "id" | "category" | "maxScore">): Finding {
   return { id: ID, category: "instructions", maxScore: MAX_SCORE, ...overrides };
 }
@@ -48,9 +45,10 @@ export const testInstructionsDetector: Detector = {
   category: "instructions",
 
   async analyze(context: RepositoryContext): Promise<Finding> {
-    const [allDocs, scripts] = await Promise.all([
+    const [allDocs, scripts, testFiles] = await Promise.all([
       collectDocumentation(context),
       discoverScripts(context),
+      findTestFiles(context),
     ]);
     const docs = repositoryDocumentation(allDocs);
 
@@ -86,9 +84,7 @@ export const testInstructionsDetector: Detector = {
     }
 
     const testScript = scriptsOfKind(scripts, "test")[0];
-    const testFile = context.files.all.find(
-      (file) => TEST_PATH.test(file.path) || TEST_FILE.test(file.path),
-    );
+    const testFile = testFiles[0];
 
     if (testScript !== undefined || testFile !== undefined) {
       const evidence: Evidence[] = [];
