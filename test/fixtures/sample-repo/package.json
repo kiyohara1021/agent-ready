@@ -1,7 +1,7 @@
 {
   "name": "sample-repo",
   "version": "1.0.0",
-  "description": "Fixture repository for agent-ready tests.",
+  "description": "Fixture repository for agentworthy tests.",
   "license": "MIT",
   "scripts": {
     "test": "node --test",

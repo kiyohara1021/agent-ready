@@ -30,7 +30,7 @@ async function runCli(args: string[], cwd = process.cwd()): Promise<CliResult> {
   }
 }
 
-describe("agent-ready CLI", () => {
+describe("agentworthy CLI", () => {
   it("checks a repository and exits 0", async () => {
     const result = await runCli(["check", SAMPLE_REPO]);
 
@@ -71,7 +71,7 @@ describe("agent-ready CLI", () => {
     expect(result.stdout.trimEnd().endsWith("}")).toBe(true);
     expect(result.stdout).not.toContain("\u001b[");
     // No banner, no trailing score line — nothing but the document.
-    expect(result.stdout).not.toContain("agent-ready 0.");
+    expect(result.stdout).not.toContain("agentworthy 0.");
     expect(result.stdout).not.toContain("Score:");
     expect(result.stderr).toBe("");
   });
@@ -147,7 +147,7 @@ describe("agent-ready CLI", () => {
   it("prints help and version", async () => {
     const help = await runCli(["--help"]);
     expect(help.code).toBe(0);
-    expect(help.stdout).toContain("agent-ready check [path] [options]");
+    expect(help.stdout).toContain("agentworthy check [path] [options]");
 
     const version = await runCli(["--version"]);
     expect(version.code).toBe(0);
@@ -167,7 +167,7 @@ describe("agent-ready CLI", () => {
   it("prints the report hierarchy documented in docs/CLI.md", async () => {
     const { stdout } = await runCli(["check", SAMPLE_REPO]);
     const positions = [
-      stdout.indexOf("agent-ready "),
+      stdout.indexOf("agentworthy "),
       stdout.indexOf("Agent Readiness:"),
       stdout.indexOf("Instructions"),
       stdout.indexOf("instructions.agents-md"),

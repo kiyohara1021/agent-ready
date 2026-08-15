@@ -1,24 +1,27 @@
 {
-  "name": "agent-ready",
+  "name": "agentworthy",
   "version": "0.1.0",
   "description": "Is your repository ready for coding agents? A deterministic, local, read-only readiness audit CLI for Codex, Claude Code, Cursor and Copilot.",
   "type": "module",
   "license": "MIT",
   "author": "Yuta Kiyohara",
-  "homepage": "https://github.com/kiyohara1021/agent-ready#readme",
+  "homepage": "https://github.com/kiyohara1021/agentworthy#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kiyohara1021/agent-ready.git"
+    "url": "git+https://github.com/kiyohara1021/agentworthy.git"
   },
   "bugs": {
-    "url": "https://github.com/kiyohara1021/agent-ready/issues"
+    "url": "https://github.com/kiyohara1021/agentworthy/issues"
   },
   "keywords": [
     "coding-agent",
     "agents",
+    "agent-ready",
+    "agent-readiness",
     "codex",
     "claude-code",
     "cursor",
+    "copilot",
     "developer-tools",
     "repository",
     "static-analysis",
@@ -31,7 +34,7 @@
     "ci"
   ],
   "bin": {
-    "agent-ready": "dist/cli/index.js"
+    "agentworthy": "dist/cli/index.js"
   },
   "exports": {
     ".": "./dist/index.js"

@@ -43,7 +43,7 @@ describe("renderTextReport", () => {
     const output = renderTextReport(result);
     const lines = output.split("\n");
 
-    expect(lines[0]).toMatch(/^agent-ready \d+\.\d+\.\d+$/);
+    expect(lines[0]).toMatch(/^agentworthy \d+\.\d+\.\d+$/);
     expect(output).toContain("Agent Readiness: 78 / 100 — Good");
     expect(output).toContain("Instructions");
     expect(output).toContain("✓ AGENTS.md detected");

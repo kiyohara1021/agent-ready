@@ -15,7 +15,7 @@ export const EXIT_CODES = {
 } as const;
 
 export const CHECK_HELP = `Usage:
-  agent-ready check [path] [options]
+  agentworthy check [path] [options]
 
 Options:
   --format <text|json>   Output format (default: text)
@@ -23,7 +23,7 @@ Options:
   --help                 Show help
   --version              Show version`;
 
-export const ROOT_HELP = `agent-ready — is your repository ready for coding agents?
+export const ROOT_HELP = `agentworthy — is your repository ready for coding agents?
 
 ${CHECK_HELP}
 

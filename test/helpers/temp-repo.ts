@@ -15,7 +15,7 @@ export interface TempRepo {
  * Anything reused across tests belongs in `test/fixtures/`.
  */
 export async function createTempRepo(files: Record<string, string> = {}): Promise<TempRepo> {
-  const root = await mkdtemp(path.join(tmpdir(), "agent-ready-test-"));
+  const root = await mkdtemp(path.join(tmpdir(), "agentworthy-test-"));
 
   for (const [relativePath, contents] of Object.entries(files)) {
     const absolutePath = path.join(root, ...relativePath.split("/"));

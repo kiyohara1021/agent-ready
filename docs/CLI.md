@@ -7,7 +7,7 @@ The CLI must be understandable without reading documentation.
 The primary experience is:
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 Avoid command proliferation.
@@ -17,17 +17,17 @@ Avoid command proliferation.
 ### `check`
 
 ```bash
-agent-ready check [path]
+agentworthy check [path]
 ```
 
 Examples:
 
 ```bash
-agent-ready check
-agent-ready check .
-agent-ready check ../api
-agent-ready check --format json
-agent-ready check --min-score 80
+agentworthy check
+agentworthy check .
+agentworthy check ../api
+agentworthy check --format json
+agentworthy check --min-score 80
 ```
 
 ## Default text output
@@ -35,7 +35,7 @@ agent-ready check --min-score 80
 Example:
 
 ```text
-agent-ready 0.1.0
+agentworthy 0.1.0
 
 Agent Readiness: 78 / 100 — Good
 
@@ -105,8 +105,8 @@ Exact visual formatting may evolve, but the information hierarchy should remain:
 ### `--format`
 
 ```bash
-agent-ready check --format text
-agent-ready check --format json
+agentworthy check --format text
+agentworthy check --format json
 ```
 
 Default:
@@ -120,7 +120,7 @@ Invalid values must fail with exit code `1`.
 ### `--min-score`
 
 ```bash
-agent-ready check --min-score 80
+agentworthy check --min-score 80
 ```
 
 Accepted range:
@@ -152,7 +152,7 @@ Example:
 
 ```text
 Usage:
-  agent-ready check [path] [options]
+  agentworthy check [path] [options]
 
 Options:
   --format <text|json>   Output format
@@ -168,8 +168,8 @@ Print only version or conventional CLI version output.
 Accepted both at the root and on `check`, matching the help text:
 
 ```bash
-agent-ready --version
-agent-ready check --version
+agentworthy --version
+agentworthy check --version
 ```
 
 ## JSON mode
@@ -206,7 +206,7 @@ documented category order, recommendations in the order defined by
 Example:
 
 ```bash
-agent-ready check --format json | jq '.score'
+agentworthy check --format json | jq '.score'
 ```
 
 must work.
@@ -238,13 +238,13 @@ Repository findings belong in the report, not stderr.
 Examples:
 
 ```bash
-agent-ready check
+agentworthy check
 echo $?
 # 0
 ```
 
 ```bash
-agent-ready check --min-score 90
+agentworthy check --min-score 90
 echo $?
 # 2 when score is 78
 ```
@@ -257,7 +257,7 @@ JSON may include a normalized path, but avoid surprising exposure of home-direct
 
 ## Non-Git directory
 
-`agent-ready` should still analyze a directory without `.git`.
+`agentworthy` should still analyze a directory without `.git`.
 
 Example finding:
 
@@ -289,11 +289,11 @@ Honor common non-color environments if straightforward.
 Possible but not part of v0.1:
 
 ```bash
-agent-ready explain <finding-id>
-agent-ready init
-agent-ready check --agent codex
-agent-ready check --agent claude
-agent-ready check --agent cursor
+agentworthy explain <finding-id>
+agentworthy init
+agentworthy check --agent codex
+agentworthy check --agent claude
+agentworthy check --agent cursor
 ```
 
 Do not implement these in the initial release unless the product specification is changed.
@@ -303,7 +303,7 @@ Do not implement these in the initial release unless the product specification i
 The CLI should already be usable in Actions:
 
 ```yaml
-- run: npx agent-ready check --min-score 80
+- run: npx agentworthy check --min-score 80
 ```
 
 This is why threshold mode and deterministic output are v0.1 requirements.

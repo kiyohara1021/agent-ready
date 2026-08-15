@@ -1,10 +1,10 @@
-# agent-ready
+# agentworthy
 
 > Is your repository ready for coding agents?
 
 ## Product vision
 
-`agent-ready` is a deterministic static-analysis CLI that evaluates how well a software repository is prepared for coding agents such as Codex, Claude Code, Cursor, and GitHub Copilot.
+`agentworthy` is a deterministic static-analysis CLI that evaluates how well a software repository is prepared for coding agents such as Codex, Claude Code, Cursor, and GitHub Copilot.
 
 The product does not try to replace coding agents, generate code, or package an entire repository into an LLM prompt. Its role is to answer a simpler and more actionable question:
 
@@ -34,7 +34,7 @@ Humans can often compensate for this through experience. Coding agents cannot re
 
 ## Solution
 
-`agent-ready` analyzes a repository locally and reports:
+`agentworthy` analyzes a repository locally and reports:
 
 - an overall score from 0 to 100
 - category scores
@@ -46,11 +46,11 @@ Humans can often compensate for this through experience. Coding agents cannot re
 Example:
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 ```text
-agent-ready 0.1.0
+agentworthy 0.1.0
 
 Agent Readiness: 78 / 100
 
@@ -80,11 +80,11 @@ Recommendations
 
 ## Positioning
 
-`agent-ready` is intentionally different from repository-to-prompt tools.
+`agentworthy` is intentionally different from repository-to-prompt tools.
 
 Tools such as Repomix, Gitingest, and code2prompt primarily help **package repository content for AI consumption**.
 
-`agent-ready` evaluates **whether the repository itself is prepared for coding agents**.
+`agentworthy` evaluates **whether the repository itself is prepared for coding agents**.
 
 The distinction is:
 
@@ -92,7 +92,7 @@ The distinction is:
 Repomix / Gitingest / code2prompt
 repository → context bundle
 
-agent-ready
+agentworthy
 repository → readiness audit
 ```
 
@@ -163,7 +163,7 @@ The initial product evaluates general coding-agent readiness rather than promoti
 
 The following are explicitly out of scope for v0.x unless this document is intentionally revised.
 
-`agent-ready` must not:
+`agentworthy` must not:
 
 - call OpenAI, Anthropic, Google, or other LLM APIs for core analysis
 - act as an autonomous coding agent
@@ -184,7 +184,7 @@ The following are explicitly out of scope for v0.x unless this document is inten
 A developer should be able to run:
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 and understand within roughly 10 seconds:

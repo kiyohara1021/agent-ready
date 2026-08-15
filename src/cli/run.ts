@@ -1,4 +1,4 @@
-import { AgentReadyError } from "../core/errors.js";
+import { AgentWorthyError } from "../core/errors.js";
 import { TOOL_VERSION } from "../core/version.js";
 import { runCheck } from "./check.js";
 import { EXIT_CODES, ROOT_HELP, type CliIo } from "./io.js";
@@ -27,7 +27,7 @@ export async function runCli(argv: readonly string[], io: CliIo): Promise<number
       return await runCheck(rest, io);
     }
 
-    io.stderr.write(`Unknown command: ${command}\n\nRun "agent-ready --help" for usage.\n`);
+    io.stderr.write(`Unknown command: ${command}\n\nRun "agentworthy --help" for usage.\n`);
     return EXIT_CODES.error;
   } catch (error) {
     io.stderr.write(`${formatError(error)}\n`);
@@ -36,7 +36,7 @@ export async function runCli(argv: readonly string[], io: CliIo): Promise<number
 }
 
 function formatError(error: unknown): string {
-  if (error instanceof AgentReadyError) return `Error: ${error.message}`;
+  if (error instanceof AgentWorthyError) return `Error: ${error.message}`;
   if (error instanceof Error) return `Error: ${error.message}`;
   return "Error: unexpected failure.";
 }

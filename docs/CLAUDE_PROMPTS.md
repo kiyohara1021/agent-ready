@@ -23,7 +23,7 @@ Do not ask Claude to implement all phases in a single session.
 ## Shared preamble (optional, once per session)
 
 ```text
-You are implementing agent-ready, a deterministic static-analysis CLI that audits whether a repository is prepared for coding agents.
+You are implementing agentworthy, a deterministic static-analysis CLI that audits whether a repository is prepared for coding agents.
 
 Read and obey these documents before coding:
 - PRODUCT.md
@@ -59,10 +59,10 @@ Keep the PR focused. Update docs only when behavior changes.
 ## PR 1 — Bootstrap
 
 ```text
-Implement PR 1 only: project bootstrap for agent-ready.
+Implement PR 1 only: project bootstrap for agentworthy.
 
 Goal:
-Create a TypeScript CLI skeleton that can run `agent-ready check` end-to-end with stub/fixture detection only. No real readiness heuristics yet.
+Create a TypeScript CLI skeleton that can run `agentworthy check` end-to-end with stub/fixture detection only. No real readiness heuristics yet.
 
 Required reading:
 - PRODUCT.md
@@ -74,14 +74,14 @@ Required reading:
 
 Implement:
 1. TypeScript ESM package for Node.js 22+
-2. package.json with bin entry `agent-ready`
+2. package.json with bin entry `agentworthy`
 3. Source layout aligned with docs/ARCHITECTURE.md:
    - src/cli/
    - src/core/
    - src/discovery/
    - src/detectors/
    - src/reporters/
-4. `agent-ready check [path]` command wiring
+4. `agentworthy check [path]` command wiring
 5. Repository discovery that builds RepositoryContext
 6. Detector interface
 7. One fixture/stub detector proving the pipeline works
@@ -101,7 +101,7 @@ Explicitly out of scope for PR 1:
 
 Acceptance:
 - `npm test`, `npm run lint`, `npm run typecheck` pass
-- `node`/local bin can run `agent-ready check` on a fixture repo
+- `node`/local bin can run `agentworthy check` on a fixture repo
 - pipeline is discovery → detectors → findings → (stub score) → report
 - analyzed repos are never modified
 - no LLM dependencies
@@ -149,7 +149,7 @@ Out of scope:
 - JSON/text reporter redesign
 
 Acceptance:
-- instruction detectors registered and exercised by `agent-ready check`
+- instruction detectors registered and exercised by `agentworthy check`
 - tests cover positive/negative/edge cases
 - docs updated only if detector IDs/behavior need clarification
 ```
@@ -278,7 +278,7 @@ Out of scope:
 - agent-specific flags
 
 Acceptance:
-- `agent-ready check --format json` emits valid JSON on stdout
+- `agentworthy check --format json` emits valid JSON on stdout
 - `--min-score` returns 2 when below threshold after printing the report
 - text output matches the information hierarchy in docs/CLI.md
 ```
@@ -337,7 +337,7 @@ Acceptance:
 ```text
 Implement PR 7 only: OSS release polish for public v0.1.
 
-Prerequisite: PR 1–6 present and `agent-ready check` is functionally complete.
+Prerequisite: PR 1–6 present and `agentworthy check` is functionally complete.
 
 Required reading:
 - docs/OSS_STRATEGY.md
@@ -348,7 +348,7 @@ Implement:
 1. README.md (English) optimized for 5-second understanding:
    - title
    - one-line value proposition
-   - `npx agent-ready check`
+   - `npx agentworthy check`
    - example score output
    - demo GIF or screenshot placeholder if asset not yet recorded
 2. README.ja.md
@@ -359,7 +359,7 @@ Implement:
 7. GitHub issue/PR templates
 8. npm package metadata: description, keywords, engines, files/bin
 9. Changelog / release notes stub for 0.1.0
-10. Dogfood CI step idea: `agent-ready check --min-score ...` once self-analysis is stable
+10. Dogfood CI step idea: `agentworthy check --min-score ...` once self-analysis is stable
 11. Positioning section vs Repomix/code2prompt/Gitingest (complementary, not hostile)
 
 Do NOT:
@@ -391,10 +391,10 @@ Then review manually before starting the next PR prompt.
 
 ## Suggested Claude session titles
 
-- `agent-ready PR1 bootstrap`
-- `agent-ready PR2 instructions`
-- `agent-ready PR3 automation`
-- `agent-ready PR4 scoring`
-- `agent-ready PR5 reporters`
-- `agent-ready PR6 safety-context`
-- `agent-ready PR7 release-polish`
+- `agentworthy PR1 bootstrap`
+- `agentworthy PR2 instructions`
+- `agentworthy PR3 automation`
+- `agentworthy PR4 scoring`
+- `agentworthy PR5 reporters`
+- `agentworthy PR6 safety-context`
+- `agentworthy PR7 release-polish`

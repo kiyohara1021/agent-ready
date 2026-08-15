@@ -1,9 +1,9 @@
-# agent-ready
+# agentworthy
 
 **Is your repository ready for coding agents?**
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 ```text
@@ -28,9 +28,9 @@ account, no telemetry.
 ## Demo
 
 <!--
-  Demo GIF placeholder. Record `npx agent-ready check` in a realistic repository
+  Demo GIF placeholder. Record `npx agentworthy check` in a realistic repository
   and save it to docs/assets/demo.gif, then replace this comment with:
-  ![agent-ready check](docs/assets/demo.gif)
+  ![agentworthy check](docs/assets/demo.gif)
   Recording instructions: docs/assets/README.md
 -->
 
@@ -46,7 +46,7 @@ files sitting next to source.
 A human joining your project works around those gaps by asking someone. An agent
 cannot. It guesses — and a wrong guess becomes a wrong pull request.
 
-`agent-ready` answers one question:
+`agentworthy` answers one question:
 
 > Can a coding agent understand, validate, and safely modify this repository
 > with minimal guesswork?
@@ -58,19 +58,19 @@ documented check.
 ## Quick start
 
 ```bash
-npx agent-ready check
+npx agentworthy check
 ```
 
 Or audit a specific path:
 
 ```bash
-npx agent-ready check ../my-project
+npx agentworthy check ../my-project
 ```
 
 Requires Node.js 22 or newer. Install it if you prefer:
 
 ```bash
-npm install -g agent-ready
+npm install -g agentworthy
 ```
 
 Options:
@@ -90,7 +90,7 @@ Exit codes: `0` passed, `1` runtime or invocation error, `2` score below
 Real output from running the tool against its own repository:
 
 ```text
-agent-ready 0.1.0
+agentworthy 0.1.0
 
 Agent Readiness: 86 / 100 — Good
 
@@ -174,7 +174,7 @@ the agent has fewer reasons to guess.
 Fail the build when readiness regresses:
 
 ```yaml
-- run: npx agent-ready check --min-score 80
+- run: npx agentworthy check --min-score 80
 ```
 
 Exit code `2` means the threshold was not met; the explanation goes to stderr,
@@ -184,7 +184,7 @@ as the repository improves.
 Machine-readable output for dashboards and custom gates:
 
 ```bash
-npx agent-ready check --format json | jq '.score'
+npx agentworthy check --format json | jq '.score'
 ```
 
 The JSON report is versioned (`schemaVersion: 1`) and includes categories,
@@ -205,8 +205,8 @@ unrecognized ecosystems still get every ecosystem-neutral check.
 
 ## How it compares
 
-`agent-ready` is complementary to repository-packing tools, not a replacement
-for them. They prepare content *for* an agent; `agent-ready` audits the
+`agentworthy` is complementary to repository-packing tools, not a replacement
+for them. They prepare content *for* an agent; `agentworthy` audits the
 repository the agent will work *in*.
 
 | Tool | Main purpose |
@@ -214,11 +214,11 @@ repository the agent will work *in*.
 | [Repomix](https://github.com/yamadashy/repomix) | Pack repository content for AI |
 | [Gitingest](https://github.com/cyclotruc/gitingest) | Convert a repository into an LLM-friendly digest |
 | [code2prompt](https://github.com/mufeedvh/code2prompt) | Turn a codebase into prompt-ready text |
-| **agent-ready** | Audit whether the repository is prepared for coding agents |
+| **agentworthy** | Audit whether the repository is prepared for coding agents |
 
 ```text
 Repomix / Gitingest / code2prompt   repository → context bundle
-agent-ready                         repository → readiness audit
+agentworthy                         repository → readiness audit
 ```
 
 Using both is reasonable: fix what the audit finds, then pack a repository that

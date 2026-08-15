@@ -1,8 +1,8 @@
-# Contributing to agent-ready
+# Contributing to agentworthy
 
 Thanks for taking the time to look at this project.
 
-`agent-ready` audits how well a repository is prepared for coding agents. The
+`agentworthy` audits how well a repository is prepared for coding agents. The
 most valuable contributions are usually **detectors and heuristics**: real
 evidence about what makes a repository easy or hard for an agent to work in.
 
@@ -13,7 +13,7 @@ Two documents define what belongs in the project:
 - [PRODUCT.md](PRODUCT.md) — vision, goals, and explicit non-goals
 - [AGENTS.md](AGENTS.md) — working instructions for contributors and coding agents
 
-The short version of the boundary: `agent-ready` is deterministic, local-first,
+The short version of the boundary: `agentworthy` is deterministic, local-first,
 and read-only. It does not call an LLM, does not package repositories into
 prompts, and does not modify the repository it analyzes.
 
