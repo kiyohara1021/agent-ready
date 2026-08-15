@@ -83,9 +83,10 @@ describe("agent-ready CLI", () => {
       const result = await runCli(["check", root, "--min-score", "50"]);
 
       expect(result.code).toBe(2);
-      // The full report is printed before the threshold decision.
-      expect(result.stdout).toContain("Agent Readiness: 0 / 100");
-      expect(result.stdout).toContain("Score: 0/100");
+      // The full report is printed before the threshold decision. The exact
+      // score belongs to test/regression/fixture-scores.test.ts.
+      expect(result.stdout).toMatch(/Agent Readiness: \d+ \/ 100/);
+      expect(result.stdout).toMatch(/Score: \d+\/100/);
       expect(result.stderr).toContain("below the required minimum of 50");
     } finally {
       await cleanup();
@@ -99,7 +100,7 @@ describe("agent-ready CLI", () => {
       const report = JSON.parse(result.stdout) as { score: number };
 
       expect(result.code).toBe(2);
-      expect(report.score).toBe(0);
+      expect(report.score).toBeLessThan(50);
     } finally {
       await cleanup();
     }

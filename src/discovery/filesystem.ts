@@ -24,6 +24,8 @@ export const SKIPPED_DIRECTORIES: readonly string[] = [
 /** Upper bounds keep `check` interactive on unexpectedly large repositories. */
 export const DEFAULT_MAX_FILES = 20_000;
 export const DEFAULT_MAX_DEPTH = 12;
+/** Enough skipped directories to describe the repository; the rest add nothing. */
+export const DEFAULT_MAX_SKIPPED_DIRECTORIES = 64;
 
 export interface RepositoryFile {
   /** Repository-relative path, always POSIX-separated. */
@@ -36,11 +38,20 @@ export interface ScanResult {
   files: RepositoryFile[];
   /** `true` when indexing stopped early because a limit was reached. */
   truncated: boolean;
+  /**
+   * Repository-relative paths of directories that indexing deliberately skipped.
+   *
+   * They exist in the working tree but hold no indexed files, which is exactly
+   * what `context.generated` needs to know: a dependency or build directory is
+   * invisible to the index whether or not the repository excludes it.
+   */
+  skippedDirectories: string[];
 }
 
 export interface ScanOptions {
   maxFiles?: number;
   maxDepth?: number;
+  maxSkippedDirectories?: number;
   skipDirectories?: readonly string[];
 }
 
@@ -60,9 +71,12 @@ export async function scanRepository(
 ): Promise<ScanResult> {
   const maxFiles = options.maxFiles ?? DEFAULT_MAX_FILES;
   const maxDepth = options.maxDepth ?? DEFAULT_MAX_DEPTH;
+  const maxSkippedDirectories =
+    options.maxSkippedDirectories ?? DEFAULT_MAX_SKIPPED_DIRECTORIES;
   const skipped = new Set(options.skipDirectories ?? SKIPPED_DIRECTORIES);
 
   const files: RepositoryFile[] = [];
+  const skippedDirectories: string[] = [];
   let truncated = false;
 
   const walk = async (absoluteDir: string, relativeDir: string, depth: number): Promise<void> => {
@@ -92,7 +106,12 @@ export async function scanRepository(
       const relativePath = relativeDir === "" ? entry.name : `${relativeDir}/${entry.name}`;
 
       if (entry.isDirectory()) {
-        if (skipped.has(entry.name)) continue;
+        if (skipped.has(entry.name)) {
+          if (skippedDirectories.length < maxSkippedDirectories) {
+            skippedDirectories.push(relativePath);
+          }
+          continue;
+        }
         await walk(path.join(absoluteDir, entry.name), relativePath, depth + 1);
         continue;
       }
@@ -118,6 +137,7 @@ export async function scanRepository(
   await walk(root, "", 0);
 
   files.sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
+  skippedDirectories.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 
-  return { files, truncated };
+  return { files, truncated, skippedDirectories };
 }

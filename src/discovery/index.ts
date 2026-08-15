@@ -2,6 +2,7 @@ export {
   scanRepository,
   DEFAULT_MAX_DEPTH,
   DEFAULT_MAX_FILES,
+  DEFAULT_MAX_SKIPPED_DIRECTORIES,
   SKIPPED_DIRECTORIES,
 } from "./filesystem.js";
 export type {
@@ -11,6 +12,18 @@ export type {
 } from "./filesystem.js";
 
 export { perContext } from "./cache.js";
+
+export {
+  ARCHITECTURE_DOCUMENT,
+  ARCHITECTURE_HEADING,
+  DECISION_DIRECTORY,
+  DECISION_HEADING,
+  STRUCTURE_HEADING,
+  describesStructure,
+  findDecisionRecords,
+  hasDirectoryMap,
+  isArchitectureDocument,
+} from "./architecture.js";
 
 export {
   COMMAND_PATTERNS,
@@ -29,6 +42,35 @@ export type { DependencyAutomation, DependencyAutomationTool } from "./dependenc
 
 export { detectEcosystems, hasSourceCode, usesTypeScript } from "./ecosystems.js";
 export type { EcosystemEvidence, EcosystemId } from "./ecosystems.js";
+
+export {
+  committedByConvention,
+  conventionalGeneratedPaths,
+  discoverGeneratedContent,
+} from "./generated.js";
+export type { GeneratedDirectory } from "./generated.js";
+
+export {
+  discoverIgnoreRules,
+  hasGitIgnore,
+  ignoreFilesOfKind,
+  rootGitIgnore,
+} from "./ignores.js";
+export type { IgnoreFile, IgnoreFileKind, IgnoreRules } from "./ignores.js";
+
+export { discoverDependencySurfaces, lockableSurfaces } from "./lockfiles.js";
+export type { DependencySurface } from "./lockfiles.js";
+
+export { discoverProjectMetadata, hasMetadata } from "./project-metadata.js";
+export type { MetadataKind, MetadataSignal } from "./project-metadata.js";
+
+export {
+  discoverSecretPaths,
+  exposedSecretPaths,
+  isTemplatePath,
+  SECRET_PROBES,
+} from "./secret-paths.js";
+export type { SecretPath, SecretPathKind } from "./secret-paths.js";
 
 export {
   builtinLintChecks,

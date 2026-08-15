@@ -1,0 +1,15 @@
+# Environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local files
+*.log
+.DS_Store
+
+# Local configuration and credentials
+.env
+*.pem

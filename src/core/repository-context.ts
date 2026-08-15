@@ -36,6 +36,13 @@ export interface RepositoryContext {
   files: RepositoryFileIndex;
   metadata: RepositoryMetadata;
   /**
+   * Repository-relative paths of directories indexing skipped — dependency,
+   * build output, and VCS internals. They exist in the working tree but
+   * contribute no indexed files, so a detector cannot infer their presence from
+   * {@link files} alone.
+   */
+  skippedDirectories: readonly string[];
+  /**
    * Reads an indexed text file, capped at `maxBytes`. Paths that are not in the
    * index resolve to `undefined`, which keeps reads inside the repository.
    * Results are cached for the lifetime of the context.
@@ -120,6 +127,7 @@ export async function buildRepositoryContext(
   return {
     root,
     files,
+    skippedDirectories: scan.skippedDirectories,
     metadata: {
       name: path.basename(root),
       hasGitMetadata: await hasGitMetadata(root),

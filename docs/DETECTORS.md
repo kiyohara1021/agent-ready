@@ -673,29 +673,54 @@ Additional ecosystem tooling may be added later.
 
 ## `context.readme`
 
+### Why it matters
+
+The README is the first file a reader opens and often the only one an agent is
+given. One that says what the project is, how to prepare it, and how to use it
+removes a round of guessing before any change is made.
+
+### Evidence
+
+The root README, in any of its recognized names and formats, parsed for its
+length and its section structure.
+
+### Partial scoring signals
+
+- the README describes the project rather than only naming it
+- a setup or installation section
+- a usage or example section
+- a development, testing, or contributing section
+
 ### Pass
 
-README exists and has meaningful project description.
-
-Additional credit may come from:
-
-- setup section
-- usage section
-- development section
+The README describes the project and carries at least one orientation section.
 
 ### Warning
 
-README exists but is minimal.
+The README exists but is roughly a line long, or it describes the project and
+then leaves the reader nowhere to go.
 
 ### Fail
 
 No README.
 
+### False-positive considerations
+
+A heading with nothing behind it earns nothing, so a table of contents cannot be
+mistaken for content. Length alone never passes either: a long README with no
+orientation sections stays a warning.
+
 ---
 
 ## `context.architecture`
 
-This detector measures discoverable architecture documentation as repository context.
+### Why it matters
+
+An agent handed one file needs a path from it to the shape of the system.
+Documentation that exists but is reachable only by guessing a filename is
+documentation an agent will not find.
+
+### Evidence
 
 Potential filenames:
 
@@ -708,80 +733,255 @@ docs/system-design.md
 docs/adr/
 ```
 
-Do not rely only on exact filenames; README headings may also qualify.
+An architecture section in the README qualifies as well, and README references
+to a separate document are what make it discoverable.
+
+### Partial scoring signals
+
+- architecture or design documentation exists
+- the README references it, or the documentation is in the README itself
+- a directory or module map
+- decision records, or more than one design document
+
+### Pass
+
+Design documentation exists and a reader arriving at the README can reach it.
+
+### Warning
+
+Documentation exists but nothing points at it, or it describes no structure.
+
+### Fail
+
+No architecture or design documentation in a conventional location.
+
+### Note on overlap
+
+`instructions.architecture` reads the same documents and asks whether the
+guidance is good enough to edit against. This detector asks whether it is
+discoverable, and a document the README never references cannot pass here
+however good it is. The two share discovery (`discovery/architecture.ts`) but
+not their scoring rationale, so the same file is never counted twice for the
+same reason.
 
 ---
 
 ## `context.metadata`
 
-Potential evidence:
+### Why it matters
 
-- meaningful package description
-- repository URL
-- license
-- runtime/engine constraints
+Name, purpose, license, home, and runtime are the facts needed before judging
+whether a change is appropriate: whether the code may be redistributed, which
+language version it must keep working on, and where the canonical copy lives.
+
+### Evidence
+
+Ecosystem manifests (`package.json`, `composer.json`, `pyproject.toml`,
+`Cargo.toml`, `pubspec.yaml`, `go.mod`), license files, toolchain pin files such
+as `.nvmrc`, `.tool-versions`, and `.python-version`, and the README.
+
+### Partial scoring signals
+
+Each signal is worth one point:
+
 - project name
+- description of what the project is
+- license
+- repository or homepage URL
+- runtime or toolchain constraint
 
-A missing npm description should not penalize a non-Node project.
+### Pass
+
+At least three signals, one of which says what the project is.
+
+### Warning
+
+Some identity exists, but the project never describes itself or most signals are
+missing.
+
+### Fail
+
+Nothing identifies the project.
+
+### False-positive considerations
+
+Every signal has a source in each supported ecosystem, and the README can supply
+name and description on its own, so a missing npm `description` never penalizes a
+non-Node project. A field that exists but is empty is not evidence, and a
+description short enough to be the project name again does not count as one.
 
 ---
 
 ## `context.ignore`
 
-Evidence:
+### Why it matters
+
+Ignore rules are the repository's own statement about which files are not worth
+reading. Without them, an agent walking the tree cannot tell a dependency copy or
+an editor scratch file from source.
+
+### Evidence
 
 ```text
-.gitignore
+.gitignore            (root and nested)
 .agentignore
 .cursorignore
 .aiderignore
+.claudeignore
+.codeiumignore
+.continueignore
+.aiexclude
+.dockerignore
+.npmignore
+.eslintignore
+.prettierignore
 ```
 
-v0.1 should prioritize `.gitignore`.
+`.gitignore` is the primary signal. Agent-specific and tool-specific files
+narrow what a reader sees without affecting what is committed, and count here for
+that reason.
 
-AI-specific ignore files may be informational initially.
+### Partial scoring signals
+
+- ignore rules exist
+- they exclude the detected ecosystems' generated output
+- they exclude editor and operating-system files, or an agent ignore file narrows
+  what an agent reads
+
+### Pass
+
+Ignore configuration exists and excludes both generated output and local noise.
+
+### Warning
+
+Ignore configuration exists but leaves one of those uncovered, or only
+agent-specific rules exist.
+
+### Fail
+
+No ignore configuration at all.
+
+### False-positive considerations
+
+Coverage is decided by matching the rules against representative paths rather
+than by searching for literal strings, so anchored, trailing-slash, and wildcard
+spellings of the same rule all count. An ecosystem with no conventional generated
+directory — Go, Make — is never asked to exclude one.
 
 ---
 
 ## `context.generated`
 
-Detect whether common generated/dependency directories are excluded or clearly separated.
+### Why it matters
 
-Examples:
+A dependency copy or a build directory dwarfs the source it was produced from. A
+repository where they are not separated spends an agent's attention on files no
+one edits.
+
+### Evidence
+
+Directories that indexing skipped, generated directories still visible in the
+index, and the repository's ignore rules. Recognized names include:
 
 ```text
 node_modules
 vendor
 .venv
+venv
 dist
 build
+_build
+.build
 coverage
+htmlcov
 .next
 .nuxt
+.svelte-kit
 .dart_tool
 target
 DerivedData
+Pods
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.tox
+.gradle
+.terraform
+.turbo
+.cache
+.parcel-cache
+bower_components
 ```
 
-A directory existing is not automatically a failure.
+### Partial scoring signals
 
-The concern is whether irrelevant generated content is likely to pollute repository context.
+- every generated directory present in the working tree is excluded
+- ignore rules declare the ecosystem's conventional generated output
+- no generated content is visible in the index
+
+### Pass
+
+Nothing generated is present, or everything present is excluded.
+
+### Warning
+
+Generated directories are present and unexcluded, but nothing generated is
+readable in the index.
+
+### Fail
+
+Generated content is both unexcluded and readable in the index.
+
+### False-positive considerations
+
+A directory existing is not automatically a failure; the question is whether the
+repository separates it. `vendor/` is exempt in Go and Ruby, where a checked-in
+copy is a supported workflow. Names that are source or script directories in some
+ecosystems — `bin`, `obj`, `lib`, `out` — are deliberately absent from the
+catalog.
 
 ---
 
 ## `safety.gitignore`
 
+### Why it matters
+
+Files produced locally — build output, logs, coverage reports, local overrides —
+become noise, merge conflicts, and occasionally leaks when they are committed,
+and nothing marks which of them were meant to be tracked.
+
+### Evidence
+
+`.gitignore` at the repository root and in subdirectories, matched against
+representative local-artifact paths for the detected ecosystems.
+
+### Partial scoring signals
+
+- `.gitignore` exists and declares rules
+- it excludes the ecosystems' local build artifacts
+- it excludes logs, caches, or local overrides
+
 ### Pass
 
-`.gitignore` exists and contains sensible exclusions for detected ecosystems.
+`.gitignore` covers the build output and local files the repository produces.
 
 ### Warning
 
-File exists but omits obvious local artifacts.
+The file exists but omits obvious local artifacts. A repository that produces
+almost nothing locally — no source, no manifest, no generated directories — is
+also warned rather than failed for having no `.gitignore` at all.
 
 ### Fail
 
-No `.gitignore` for a repository where local/generated files are likely.
+No `.gitignore` in a repository that builds or runs code.
+
+### Note on overlap
+
+`context.ignore` reads the same file to ask whether irrelevant content is easy to
+avoid, and counts agent-specific ignore files toward that. This detector asks the
+narrower hygiene question — is what the working tree produces kept out of
+commits? — so only `.gitignore` answers it.
 
 ---
 
@@ -789,7 +989,8 @@ No `.gitignore` for a repository where local/generated files are likely.
 
 ### Goal
 
-Detect unsafe repository configuration without becoming a secret-scanning product.
+Detect unsafe repository configuration without becoming a secret-scanning
+product.
 
 ### Signals
 
@@ -800,8 +1001,11 @@ Check ignore rules for common secret-bearing paths:
 .env.*
 *.pem
 *.key
-credentials
+*.p12, *.pfx, *.jks, *.keystore, *.ppk
+id_rsa, id_dsa, id_ecdsa, id_ed25519
+credentials, credentials.json
 service-account*.json
+.netrc, .pgpass, .htpasswd
 ```
 
 Safe template exceptions:
@@ -809,13 +1013,48 @@ Safe template exceptions:
 ```text
 .env.example
 .env.sample
+.env.template
+*.example, *.sample, *.template, *.dist
 ```
+
+### Partial scoring signals
+
+- ignore rules exclude environment files
+- ignore rules exclude private keys and credential files
+- a committed template documents the required settings
+
+### Pass
+
+Environment files, keys, and credential files are all excluded.
+
+### Warning
+
+Only some categories are excluded, or key material sits in a test or fixture
+location outside the ignore rules.
+
+### Fail
+
+A secret-bearing file is present, is not a template, and no ignore rule excludes
+it — or nothing at all is excluded.
 
 ### Critical rule
 
 Never display secret contents.
 
+The detector never opens a candidate file. Classification is by filename,
+exclusion comes from the ignore rules, and a finding carries only the path and
+the category of file — enough to explain the risk and act on it. No secret value,
+environment file body, or key material can appear in a report, because none is
+ever read.
+
 Do not implement broad entropy-based secret scanning in v0.1.
+
+### False-positive considerations
+
+Keys and credentials under a test, fixture, or example directory are usually
+deliberate test material, so they are reported as a warning rather than a
+failure. Public material — `*.pub`, certificates — is not in the catalog, and
+names like `.env.d.ts` are excluded as source files.
 
 ---
 
@@ -829,9 +1068,17 @@ SECURITY.md
 docs/SECURITY.md
 ```
 
+### Partial scoring signals
+
+- a security policy exists
+- it explains how to report a vulnerability
+- it states supported versions or a response expectation
+
 ### Warning versus fail
 
-For a personal sample project, this may be a low-priority warning rather than a severe failure.
+For a personal sample project, this may be a low-priority warning rather than a
+severe failure. A policy that exists but is nearly empty is a warning; a missing
+policy fails the check but recommends at low priority.
 
 The score weight remains documented, but recommendation priority may vary.
 
@@ -839,12 +1086,20 @@ The score weight remains documented, but recommendation priority may vary.
 
 ## `safety.lockfile`
 
-Detect ecosystem-appropriate lockfiles.
+### Why it matters
 
-Examples:
+Without a lockfile, the dependency tree a change was tested against is not the
+one CI or a colleague resolves, and the failures that follow look like the change
+and are not.
+
+### Evidence
+
+Ecosystem-appropriate lockfiles, looked for beside the manifest that proved the
+ecosystem:
 
 ```text
 package-lock.json
+npm-shrinkwrap.json
 pnpm-lock.yaml
 yarn.lock
 bun.lock
@@ -852,16 +1107,50 @@ bun.lockb
 composer.lock
 uv.lock
 poetry.lock
+pdm.lock
 Pipfile.lock
 Cargo.lock
+go.sum
 Gemfile.lock
 pubspec.lock
 Package.resolved
+mix.lock
 ```
+
+Lockfiles are never opened; presence is the whole signal. The one exception is
+`requirements.txt`, which is read to see whether it pins every dependency
+exactly — a fully pinned requirements file is the lock, and asking such a project
+for `uv.lock` as well would be a false positive.
+
+### Partial scoring signals
+
+- a lockfile exists where one is meaningful
+- every such ecosystem in the repository is locked
+- the committed lockfile matches the package manager the project declares
+
+### Pass
+
+Every ecosystem that declares dependencies commits a lockfile, and no lockfile
+contradicts the project's declared package manager.
+
+### Warning
+
+Dependencies are partly pinned: one ecosystem is unlocked, two lockfiles compete
+for the same ecosystem, or `packageManager` names a manager whose lockfile is not
+the committed one. The dependencies are still pinned, so this withholds a point
+rather than failing.
+
+### Fail
+
+An ecosystem declares dependencies and commits no lockfile.
 
 ### Applicability
 
-Do not penalize a repository with no applicable dependency management.
+Do not penalize a repository with no applicable dependency management. The check
+applies only where locking is meaningful: the ecosystem has a conventional
+lockfile *and* the manifest declares dependencies. A crate with no dependencies,
+a Go module with no `require`, and a Java or .NET project — whose ecosystems have
+no conventional lockfile — are excluded from the score rather than failed.
 
 ## Detector test template
 

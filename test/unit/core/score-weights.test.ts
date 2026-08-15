@@ -15,8 +15,8 @@ import { fixture } from "../../helpers/temp-repo.js";
  * changed — deliberately, by editing the document and the code together — but
  * it can no longer drift in one of them alone.
  *
- * Categories whose detectors have not landed yet are listed explicitly rather
- * than skipped, so the pull request that adds them has to update this file.
+ * The implemented-category list is explicit rather than derived from the
+ * registry, so a detector that quietly stops being registered fails here.
  */
 
 const SCORING_DOC = path.resolve(import.meta.dirname, "../../../docs/SCORING.md");
@@ -26,8 +26,8 @@ const CATEGORY_HEADING = /^### (.+?) — (\d+) points$/;
 /** `#### `instructions.agents-md` — 10` */
 const CHECK_HEADING = /^#### `([a-z][a-z.-]*)` — (\d+)$/;
 
-/** Categories whose detectors are implemented; the rest arrive in a later PR. */
-const IMPLEMENTED_CATEGORIES: readonly CategoryId[] = ["instructions", "automation"];
+/** Every documented category now has detectors. */
+const IMPLEMENTED_CATEGORIES: readonly CategoryId[] = [...CATEGORY_ORDER];
 
 const TITLE_TO_ID = new Map<string, CategoryId>(
   CATEGORY_ORDER.map((id) => [CATEGORY_TITLES[id], id]),

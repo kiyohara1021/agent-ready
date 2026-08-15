@@ -234,6 +234,19 @@ workflow.
 
 README exists and has useful project description/setup information.
 
+Suggested scoring:
+
+```text
+README describes the project                  +2
+setup or installation section                 +1
+usage or example section                      +1
+development, testing, or contributing section +1
+
+README exists but is minimal                   1   (instead of the above)
+```
+
+A heading with nothing behind it earns nothing.
+
 #### `context.architecture` — 5
 
 Architecture or design context is discoverable.
@@ -241,6 +254,20 @@ Architecture or design context is discoverable.
 This overlaps conceptually with instructions but measures repository context rather than agent-specific guidance.
 
 Avoid double-counting identical evidence where possible.
+
+Suggested scoring:
+
+```text
+architecture or design documentation exists   +2
+the README references it, or it is in the
+  README itself                               +1
+directory or module map                       +1
+decision records or a second design document  +1
+```
+
+Reachability is what separates this check from `instructions.architecture`: a
+document the README never references cannot pass here, however good the guidance
+inside it is.
 
 #### `context.metadata` — 5
 
@@ -254,6 +281,21 @@ Signals may include:
 - supported runtime
 - meaningful project name
 
+Suggested scoring:
+
+```text
+project name                                  +1
+description of what the project is            +1
+license                                       +1
+repository or homepage URL                    +1
+runtime or toolchain constraint               +1
+```
+
+A pass needs at least three signals, one of which says what the project is. Each
+signal has a source in every supported ecosystem, and the README can supply name
+and description, so a missing npm `description` never penalizes a non-Node
+project.
+
 #### `context.ignore` — 5
 
 Ignore configuration makes irrelevant repository content easier to avoid.
@@ -263,6 +305,16 @@ Signals:
 - `.gitignore`
 - ecosystem ignores
 - AI-specific ignore files where relevant
+
+Suggested scoring:
+
+```text
+ignore rules exist                            +2   (+1 when only agent
+                                                    ignore files exist)
+they exclude the ecosystems' generated output +2
+they exclude editor/OS files, or an agent
+  ignore file narrows what an agent reads     +1
+```
 
 #### `context.generated` — 5
 
@@ -280,11 +332,35 @@ Examples:
 - build output
 - generated clients
 
+Suggested scoring:
+
+```text
+every generated directory present is excluded +3
+ignore rules declare the ecosystem's output   +1
+no generated content is visible in the index  +1
+```
+
+A directory existing is not a failure on its own. `vendor/` is exempt in Go and
+Ruby, where a checked-in copy is a supported workflow.
+
 ### Safety — 20 points
 
 #### `safety.gitignore` — 5
 
 Basic local/sensitive artifacts are excluded.
+
+Suggested scoring:
+
+```text
+.gitignore exists and declares rules          +2
+it excludes the ecosystems' build artifacts   +2
+it excludes logs, caches, or local overrides  +1
+
+no .gitignore, little produced locally         1   (instead of the above)
+```
+
+A repository with no source, no manifest, and no generated directories produces
+almost nothing locally, so a missing `.gitignore` is warned rather than failed.
 
 #### `safety.secrets` — 5
 
@@ -296,17 +372,54 @@ Positive examples:
 - `.env.example` committed
 - private keys excluded
 
-The detector must never print actual secrets.
+Suggested scoring:
+
+```text
+ignore rules exclude environment files        +2
+ignore rules exclude keys and credentials     +2
+a committed template documents the settings   +1
+
+key material exposed in a test/fixture path    1   (instead of the above)
+a secret-bearing file exposed elsewhere        0   (instead of the above)
+```
+
+The detector must never print actual secrets. It never reads a candidate file at
+all: classification is by filename, and a finding carries only the path and the
+category of file.
 
 #### `safety.security-policy` — 5
 
 `SECURITY.md` or equivalent responsible disclosure/security policy exists.
+
+Suggested scoring:
+
+```text
+a security policy exists                      +3
+it explains how to report a vulnerability     +1
+it states supported versions or a response
+  expectation                                 +1
+
+a policy that exists but is nearly empty       1   (instead of the above)
+```
 
 #### `safety.lockfile` — 5
 
 A dependency lockfile exists when conventional for the detected ecosystem.
 
 For repositories without applicable dependency management, mark as neutral rather than automatically failing.
+
+Suggested scoring:
+
+```text
+a lockfile exists where one is meaningful     +3
+every such ecosystem is locked                +1
+the lockfile matches the declared manager     +1
+```
+
+Locking is meaningful only where the ecosystem has a conventional lockfile *and*
+the manifest declares dependencies. A dependency-free project, and an ecosystem
+with no conventional lockfile such as Java or .NET, are not applicable and are
+excluded from the denominator.
 
 ## Finding statuses
 
